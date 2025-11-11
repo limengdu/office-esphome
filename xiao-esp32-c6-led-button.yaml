@@ -1,0 +1,194 @@
+substitutions:
+  name: "xiao-esp32-c6-led-button"
+  friendly_name: "XIAO ESP32-C6 LED Button"
+
+  # --- Button 1 Settings ---
+  button_1_name: "Lighted Button 1"
+  button_1_pin_sig1_led: GPIO0  # LED control pin (SIG1)
+  button_1_pin_sig2_btn: GPIO1  # Button status pin (SIG2)
+
+  # --- Button 2 Settings ---
+  button_2_name: "Lighted Button 2"
+  button_2_pin_sig1_led: GPIO19 # LED control pin (SIG1)
+  button_2_pin_sig2_btn: GPIO20 # Button status pin (SIG2)
+
+  # --- Button 3 Settings ---
+  button_3_name: "Lighted Button 3"
+  button_3_pin_sig1_led: GPIO2  # LED control pin (SIG1)
+  button_3_pin_sig2_btn: GPIO21 # Button status pin (SIG2)
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  name_add_mac_suffix: true
+  on_boot:
+    priority: -100.0 # Ensures this runs after hardware initialization.
+    then:
+      # Requirement 1: Turn on LEDs at boot to make them always on.
+      - logger.log: "Device booted. Turning on all LEDs."
+      - light.turn_on: led_1
+      - light.turn_on: led_2
+      - light.turn_on: led_3 # Added for the new button
+
+esp32:
+  board: esp32-c6-devkitc-1
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "/TAVPmO4shiP9B9TsyToYaV9Pz36CRRvLCDvCWEtUlI="
+
+ota:
+  - platform: esphome
+    password: "8e712697b360e6a1683692d824b06ac0"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Xiao-Esp32-C6-Led-Button"
+    password: "OoUwUbxTRsbj"
+
+captive_portal:
+
+output:
+  # --- LED Output for Button 1 ---
+  - platform: gpio
+    pin: ${button_1_pin_sig1_led}
+    id: led_1_output
+
+  # --- LED Output for Button 2 ---
+  - platform: gpio
+    pin: ${button_2_pin_sig1_led}
+    id: led_2_output
+
+  # --- LED Output for Button 3 ---
+  - platform: gpio
+    pin: ${button_3_pin_sig1_led}
+    id: led_3_output
+
+light:
+  # --- Light Entity for Button 1's LED ---
+  - platform: binary
+    name: "${button_1_name} LED"
+    output: led_1_output
+    id: led_1
+    internal: true # Hide this entity from Home Assistant UI to avoid clutter.
+
+  # --- Light Entity for Button 2's LED ---
+  - platform: binary
+    name: "${button_2_name} LED"
+    output: led_2_output
+    id: led_2
+    internal: true # Hide this entity from Home Assistant UI.
+
+  # --- Light Entity for Button 3's LED ---
+  - platform: binary
+    name: "${button_3_name} LED"
+    output: led_3_output
+    id: led_3
+    internal: true
+
+binary_sensor:
+  # --- Physical Button Detection for Button 1 ---
+  - platform: gpio
+    pin:
+      number: ${button_1_pin_sig2_btn}
+      mode: INPUT_PULLUP # Use internal pull-up for stability.
+      inverted: true
+    id: physical_button_1
+    internal: true # This is an internal sensor, used only to trigger automations.
+    # The module outputs HIGH by default and LOW when pressed, so we must invert the logic.
+    filters:
+      # Debounce filter to prevent a single press from registering multiple times.
+      - delayed_on: 25ms
+    # Actions to perform when the button is pressed.
+    on_press:
+      then:
+        # Requirement 3: Toggle the state of the switch.
+        - switch.toggle: button_1_switch
+        # Requirement 1 (part 2): Blink the LED twice on press.
+        - logger.log: "Button 1 pressed. Blinking LED twice."
+        - repeat:
+            count: 2
+            then:
+              - light.turn_on: led_1
+              - delay: 150ms
+              - light.turn_off: led_1
+              - delay: 150ms
+        # After blinking, ensure the LED returns to its default "on" state.
+        - light.turn_on: led_1
+
+  # --- Physical Button Detection for Button 2 ---
+  - platform: gpio
+    pin:
+      number: ${button_2_pin_sig2_btn}
+      mode: INPUT_PULLUP
+      inverted: true
+    id: physical_button_2
+    internal: true
+    filters:
+      - delayed_on: 25ms
+    on_press:
+      then:
+        - switch.toggle: button_2_switch
+        - logger.log: "Button 2 pressed. Blinking LED twice."
+        - repeat:
+            count: 2
+            then:
+              - light.turn_on: led_2
+              - delay: 150ms
+              - light.turn_off: led_2
+              - delay: 150ms
+        - light.turn_on: led_2
+
+  # --- Physical Button Detection for Button 3 ---
+  - platform: gpio
+    pin:
+      number: ${button_3_pin_sig2_btn}
+      mode: INPUT_PULLUP
+      inverted: true
+    id: physical_button_3
+    internal: true
+    filters:
+      - delayed_on: 25ms
+    on_press:
+      then:
+        - switch.toggle: button_3_switch
+        - logger.log: "Button 3 pressed. Blinking LED twice."
+        - repeat:
+            count: 2
+            then:
+              - light.turn_on: led_3
+              - delay: 150ms
+              - light.turn_off: led_3
+              - delay: 150ms
+        - light.turn_on: led_3
+
+switch:
+  # --- Switch Entity for Button 1 ---
+  - platform: template
+    name: ${button_1_name}
+    id: button_1_switch
+    # Optimistic mode: The state in HA updates immediately when a command
+    # is sent, without waiting for feedback. Ideal for this use case.
+    optimistic: true
+
+  # --- Switch Entity for Button 2 ---
+  - platform: template
+    name: ${button_2_name}
+    id: button_2_switch
+    optimistic: true
+
+  # --- Switch Entity for Button 3 ---
+  - platform: template
+    name: ${button_3_name}
+    id: button_3_switch
+    optimistic: true

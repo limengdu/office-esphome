@@ -1,0 +1,880 @@
+esphome:
+  name: reterminal-e1002
+  friendly_name: reTerminal_E1002
+  on_boot:
+    priority: 600
+    then:
+      - output.turn_on: bsp_battery_enable
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+
+globals:
+  - id: current_page
+    type: int
+    restore_value: no
+    initial_value: '1'
+  - id: total_pages
+    type: int
+    restore_value: no
+    initial_value: '3'  # 修改这里的数字即可
+
+  - id: g_iot_switch_1_state
+    type: bool
+    initial_value: 'false'
+  - id: g_iot_switch_2_state
+    type: bool
+    initial_value: 'false'
+  - id: g_iot_switch_3_state
+    type: bool
+    initial_value: 'false'
+  - id: g_led_button_1_state
+    type: bool
+    initial_value: 'false'
+  - id: g_led_button_2_state
+    type: bool
+    initial_value: 'false'
+  - id: g_led_button_3_state
+    type: bool
+    initial_value: 'false'
+
+# 启用日志
+logger:
+
+# 启用Home Assistant API
+api:
+  encryption:
+    key: "VBu/WAG4rgUOz16VlSS+1y6O3cGSsAXH+9tNRrB9KGk="
+
+ota:
+  - platform: esphome
+    password: "0d1b954a02b0bdef9d3e02ca86bcf637"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # 在wifi连接失败时启用后备热点（强制门户）
+  ap:
+    ssid: "Reterminal-E1002"
+    password: "txMpxBpbD69t"
+
+captive_portal:
+
+# 定义SPI接口
+spi:
+  clk_pin: GPIO7
+  mosi_pin: GPIO9
+i2c:
+  scl: GPIO20
+  sda: GPIO19
+
+# ===============================================================
+# =================== 新增/修改的部分从这里开始 ===================
+# ===============================================================
+
+# 1. 定义字体
+#    - mdi.ttf 是图标字体，需要您手动下载并放到配置目录下
+#    - Google Fonts 会自动下载
+font:
+  - file: "gfonts://Roboto"
+    id: font_large
+    size: 42
+  - file: "gfonts://Roboto"
+    id: font_medium
+    size: 24
+  - file: "gfonts://Roboto"
+    id: font_small
+    size: 18
+  - file: "gfonts://Roboto@700" # 新增：Roboto Bold (700)
+    id: font_small_bold
+    size: 18
+  - file: "mdi.ttf" # Material Design Icons 字体
+    id: font_icon
+    size: 32
+    glyphs:
+      - "\U000F141E" # mdi:sun-wireless-outline (光照)
+      - "\U000F048C" # mdi:radar (雷达)
+      - "\U000F0972" # mdi:heart-pulse (心率)
+      - "\U000F0566" # mdi:lungs (呼吸)
+      - "\U000F058E" # mdi:water-percent (湿度)
+      - "\U000F0079" # mdi:battery-charging-50 (电池)
+      - "\U000F0C2B" # mdi:molecule-co (CO)
+      - "\U000F18F4" # mdi:molecule (VOC)
+      - "\U000F0241" # mdi:flash (电)
+      - "\U000F06A5" # mdi:lightning-bolt (功率)
+      - "\U000F095B" # mdi:alpha-a-circle-outline (电流)
+      - "\U000F110B" # mdi:sine-wave (频率)
+      - "\U000F1904" # mdi:gauge (总能耗)
+      - "\U000F1A89" # mdi:meter-electric-outline
+      - "\U000F02E3"
+      - "\U000F0531"
+      - "\U000F02DC"
+      - "\U000F0FB0"
+      # Page 2 Icons (新增)
+      - "\U000F0512" # mdi:toggle-switch
+      - "\U000F0213" # mdi:fan
+      - "\U000F1051" # mdi:led-strip-variant
+      - "\U000F06E0" # mdi:lightbulb-on-outline
+      - "\U000F01D3" # mdi:brightness-5 (亮度)
+      # Page 3 Icons
+      - "\U000F040E"
+      - "\U000F04AD"
+      - "\U000F04AE"
+      - "\U000F1A4B"
+      - "\U000F0210"
+  - file: "mdi.ttf" # 状态栏小图标字体
+    id: font_icon_small
+    size: 22
+    glyphs:
+      - "\U000F058E" # mdi:thermometer
+      - "\U000F0510" # mdi:water-percent
+      - "\U000F0079" # mdi:battery
+
+# 2. 从Home Assistant获取时间
+time:
+  - platform: homeassistant
+    id: ha_time
+
+# LED configuration
+output:
+  - platform: gpio
+    pin: GPIO6
+    id: led_output
+    inverted: true
+  - platform: gpio
+    pin: GPIO21
+    id: bsp_battery_enable
+  - platform: ledc
+    pin: GPIO45
+    id: buzzer_pwm
+    # 初始频率可以随便设置一个，我们会在自动化中动态改变它
+    frequency: 1000Hz
+
+# 3. 修改按键定义，实现翻页和刷新
+binary_sensor:
+  # --- 按键1: 刷新 (绿色键) ---
+  - platform: gpio
+    pin:
+      number: GPIO3         # Green button
+      mode: INPUT_PULLUP
+      inverted: true
+    id: button_1
+    name: "Button 1 (Refresh)"
+    on_press:
+      then:
+        - light.turn_on:
+            id: buzzer
+            brightness: 50%
+        - delay: 200ms
+        - light.turn_off: buzzer
+        # Pause for 100 milliseconds between beeps.
+        - delay: 100ms
+        # Second beep: turn on at 70% volume for 200 milliseconds.
+        - light.turn_on:
+            id: buzzer
+            brightness: 70%
+        - delay: 200ms
+        - light.turn_off: buzzer
+        # 保留原有的屏幕刷新动作
+        - lambda: id(epaper_display).update();
+
+  # --- 按键2: 下一页 (右侧白色键) ---
+  - platform: gpio
+    pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+      inverted: true
+    id: button_2
+    name: "Button 2 (Next Page)"
+    on_press:
+      then:
+        # 翻页提示音
+        - light.turn_on:
+            id: buzzer
+            brightness: 70%
+        - delay: 150ms
+        - light.turn_off:
+            id: buzzer
+        - light.turn_on:
+            id: buzzer
+            brightness: 70%
+        - delay: 100ms
+        - light.turn_off:
+            id: buzzer
+        # 翻页逻辑：使用全局变量
+        - lambda: |-
+            if (id(current_page) >= id(total_pages)) {
+              id(current_page) = 1;
+            } else {
+              id(current_page)++;
+            }
+            id(epaper_display).update();
+
+  # --- 按键3: 上一页 (左侧白色键) ---
+  - platform: gpio
+    pin:
+      number: GPIO5
+      mode: INPUT_PULLUP
+      inverted: true
+    id: button_3
+    name: "Button 3 (Prev Page)"
+    on_press:
+      then:
+        # 翻页提示音
+        - light.turn_on:
+            id: buzzer
+            brightness: 70%
+        - delay: 150ms
+        - light.turn_off:
+            id: buzzer
+        - light.turn_on:
+            id: buzzer
+            brightness: 70%
+        - delay: 100ms
+        - light.turn_off:
+            id: buzzer
+        # 翻页逻辑：使用全局变量
+        - lambda: |-
+            if (id(current_page) <= 1) {
+              id(current_page) = id(total_pages);
+            } else {
+              id(current_page)--;
+            }
+            id(epaper_display).update();
+
+light:
+  - platform: binary
+    name: "Onboard LED"
+    output: led_output
+    id: onboard_led
+  - platform: monochromatic
+    output: buzzer_pwm
+    name: "Buzzer"
+    id: buzzer
+    # 设置为0秒，让蜂鸣器可以瞬间响应
+    default_transition_length: 0s
+
+text_sensor:
+  - platform: homeassistant
+    id: ha_soil_moisture
+    entity_id: sensor.xiao_soil_moisture_8a2da8_soil_moisture_status
+    internal: true
+
+# 3. 从Home Assistant导入所有需要的传感器实体
+sensor:
+  # Seeed MR60BHA2
+  - platform: homeassistant
+    id: ha_illuminance
+    entity_id: sensor.seeedstudio_mr60bha2_kit_0336ec_seeed_mr60bha2_illuminance
+    internal: true
+  - platform: homeassistant
+    id: ha_object_distance
+    entity_id: sensor.seeedstudio_mr60bha2_kit_0336ec_distance_to_detection_object
+    internal: true
+  - platform: homeassistant
+    id: ha_heart_rate
+    entity_id: sensor.seeedstudio_mr60bha2_kit_0336ec_real_time_heart_rate
+    internal: true
+  - platform: homeassistant
+    id: ha_respiratory_rate
+    entity_id: sensor.seeedstudio_mr60bha2_kit_0336ec_real_time_respiratory_rate
+    internal: true
+
+  # XIAO Soil Moisture
+  - platform: homeassistant
+    id: ha_soil_battery
+    entity_id: sensor.xiao_soil_moisture_8a2da8_battery_measurement
+    internal: true
+
+  # XIAO 2-Channel Energy Meter
+  - platform: homeassistant
+    id: ha_em_voltage
+    entity_id: sensor.seeedstudio_2ch_em_bl0939_energy_1
+    internal: true
+  - platform: homeassistant
+    id: ha_em_power_1
+    entity_id: sensor.seeedstudio_2ch_em_bl0939_energy_2
+    internal: true
+  - platform: homeassistant
+    id: ha_em_current_1
+    entity_id: sensor.seeedstudio_2ch_em_bl0939_current_1
+    internal: true
+  - platform: homeassistant
+    id: ha_em_energy_total
+    entity_id: sensor.seeedstudio_2ch_em_bl0939_energy_total
+    internal: true
+
+  # XIAO 2-Channel Smart Relay
+  - platform: homeassistant
+    id: ha_relay_energy_1
+    entity_id: sensor.seeedstudio_2ch_em_bl0939_energy_1
+    internal: true
+  - platform: homeassistant
+    id: ha_relay_energy_2
+    entity_id: sensor.seeedstudio_2ch_em_bl0939_energy_2
+    internal: true
+
+  # XIAO Gas Sensor
+  - platform: homeassistant
+    id: ha_gas_voc
+    entity_id: sensor.xiao_esp32_c3_gas_sensor_a0de2c_volatile_organic_compounds
+    internal: true
+  - platform: homeassistant
+    id: ha_gas_co
+    entity_id: sensor.xiao_esp32_c3_gas_sensor_a0de2c_carbon_monoxide
+    internal: true
+  - platform: homeassistant
+    id: ha_gas_no2
+    entity_id: sensor.xiao_esp32_c3_gas_sensor_a0de2c_nitrogen_dioxide
+    internal: true
+  - platform: homeassistant
+    id: ha_gas_ethanol
+    entity_id: sensor.xiao_esp32_c3_gas_sensor_a0de2c_ethanol
+    internal: true
+
+  # reTerminal Onboard Sensors
+  - platform: adc
+    pin: GPIO1
+    name: "Battery Voltage"
+    id: battery_voltage
+    update_interval: 60s
+    attenuation: 12db
+    filters:
+      - multiply: 2.0  # Voltage divider compensation
+  - platform: sht4x
+    temperature:
+      name: "Temperature"
+      id: temp_sensor
+    humidity:
+      name: "Relative Humidity"
+      id: hum_sensor
+  - platform: template
+    name: "Battery Level"
+    id: battery_level
+    unit_of_measurement: "%"
+    icon: "mdi:battery"
+    device_class: battery
+    state_class: measurement
+    lambda: 'return id(battery_voltage).state;'
+    update_interval: 10s
+    filters:
+      - calibrate_linear:
+          - 4.15 -> 100.0
+          - 3.96 -> 90.0
+          - 3.91 -> 80.0
+          - 3.85 -> 70.0
+          - 3.80 -> 60.0
+          - 3.75 -> 50.0
+          - 3.68 -> 40.0
+          - 3.58 -> 30.0
+          - 3.49 -> 20.0
+          - 3.41 -> 10.0
+          - 3.30 -> 5.0
+          - 3.27 -> 0.0
+      - clamp:
+          min_value: 0
+          max_value: 100
+
+# 新增：Page 2 - 开关实体
+switch:
+  - platform: homeassistant
+    id: ha_iot_switch_1
+    entity_id: switch.seeedstudio_iot_button_41a448_switch_1
+    # 当 HA 状态更新时，将新状态存入全局变量
+    on_state:
+      then:
+        - globals.set:
+            id: g_iot_switch_1_state
+            value: !lambda 'return x;'
+
+  - platform: homeassistant
+    id: ha_iot_switch_2
+    entity_id: switch.seeedstudio_iot_button_41a448_switch_2
+    on_state:
+      then:
+        - globals.set:
+            id: g_iot_switch_2_state
+            value: !lambda 'return x;'
+
+  - platform: homeassistant
+    id: ha_iot_switch_3
+    entity_id: switch.seeedstudio_iot_button_41a448_switch_3
+    on_state:
+      then:
+        - globals.set:
+            id: g_iot_switch_3_state
+            value: !lambda 'return x;'
+
+  - platform: homeassistant
+    id: ha_led_button_1
+    entity_id: switch.xiao_esp32_c6_led_button_b4a83c_lighted_button_1
+    on_state:
+      then:
+        - globals.set:
+            id: g_led_button_1_state
+            value: !lambda 'return x;'
+
+  - platform: homeassistant
+    id: ha_led_button_2
+    entity_id: switch.xiao_esp32_c6_led_button_b4a83c_lighted_button_2
+    on_state:
+      then:
+        - globals.set:
+            id: g_led_button_2_state
+            value: !lambda 'return x;'
+
+  - platform: homeassistant
+    id: ha_led_button_3
+    entity_id: switch.xiao_esp32_c6_led_button_b4a83c_lighted_button_3
+    on_state:
+      then:
+        - globals.set:
+            id: g_led_button_3_state
+            value: !lambda 'return x;'
+
+# 4. 墨水屏显示配置
+display:
+  - platform: epaper_spi
+    id: epaper_display
+    model: 7.3in-spectra-e6
+    cs_pin: GPIO10
+    dc_pin: GPIO11
+    reset_pin:
+      number: GPIO12
+      inverted: false
+    busy_pin:
+      number: GPIO13
+      inverted: true
+    update_interval: 600s # 10分钟更新一次，可以根据需要调整
+    
+    # 使用 lambda 绘制界面
+    lambda: |-
+      // 定义颜色常量 (注意：E6屏幕只有黑、白、黄)
+      const auto COLOR_BLACK   = Color(0,   0,   0);
+      const auto COLOR_WHITE   = Color(255, 255, 255);
+      const auto COLOR_YELLOW  = Color(255, 255, 0); // 使用黄色作为强调色
+      const auto COLOR_RED     = Color(255, 0,   0); // 在屏幕上会显示为黄色
+      const auto COLOR_BLUE    = Color(0,   0,   255); // 在屏幕上会显示为黄色
+      const auto COLOR_GREEN   = Color(0,   255, 0); // 在屏幕上会显示为黄色
+
+      // --- 绘制通用部分 ---
+      // 清空屏幕为白色背景
+      it.fill(COLOR_WHITE);
+
+      // --- 绘制标题栏 ---
+      // 绘制绿色的标题栏背景矩形
+      it.filled_rectangle(0, 0, 800, 45, COLOR_GREEN);
+
+      // 在标题栏左侧绘制标题文字，使用白色文字
+      // (字体将使用您在 id(font_medium) 中定义的字体)
+      it.printf(15, 23, id(font_medium), COLOR_WHITE, TextAlign::CENTER_LEFT, "Smart Home Data Center");
+
+      // --- 在标题栏右侧绘制状态信息 (从右向左排列) ---
+      // 初始化状态信息的起始X坐标，从屏幕最右侧开始
+      int status_x = 785;
+
+      // 如果电池电量传感器有数据，则显示电池信息
+      if (id(battery_level).has_state()) {
+        // 显示电池百分比数值
+        it.printf(status_x, 23, id(font_small), COLOR_WHITE, TextAlign::CENTER_RIGHT, "%.0f%%", id(battery_level).state);
+        // 向左移动X坐标，为刚绘制的文本和即将绘制的图标留出空间 (缩小了间距)
+        status_x -= 45;
+        // 显示电池图标
+        it.printf(status_x, 23, id(font_icon_small), COLOR_WHITE, TextAlign::CENTER_RIGHT, "\U000F0079");
+        // 在电池信息块和下一个信息块之间增加一段间距
+        status_x -= 40;
+      }
+
+      // 如果湿度传感器有数据，则显示湿度信息
+      if (id(hum_sensor).has_state()) {
+        // 显示湿度百分比数值
+        it.printf(status_x, 23, id(font_small), COLOR_WHITE, TextAlign::CENTER_RIGHT, "%.0f%%", id(hum_sensor).state);
+        // 向左移动X坐标，为文本和图标留出空间 (缩小了间距)
+        status_x -= 45;
+        // 显示水滴/湿度图标
+        it.printf(status_x, 23, id(font_icon_small), COLOR_WHITE, TextAlign::CENTER_RIGHT, "\U000F058E");
+        // 在湿度信息块和下一个信息块之间增加一段间距
+        status_x -= 40;
+      }
+
+      // 如果温度传感器有数据，则显示温度信息
+      if (id(temp_sensor).has_state()) {
+        // 显示带一位小数的温度值
+        it.printf(status_x, 23, id(font_small), COLOR_WHITE, TextAlign::CENTER_RIGHT, "%.1f°C", id(temp_sensor).state);
+        // 向左移动X坐标，为文本和图标留出空间 (缩小了间距)
+        status_x -= 55;
+        // 显示温度计图标
+        it.printf(status_x, 23, id(font_icon_small), COLOR_WHITE, TextAlign::CENTER_RIGHT, "\U000F0510");
+      }
+
+      // --- 在标题栏中间显示页码 ---
+      // 使用白色文字在屏幕水平中央显示页码
+      it.printf(400, 23, id(font_small), COLOR_WHITE, TextAlign::CENTER, "Page %d / 3", id(current_page));
+
+      // --- 根据当前页码绘制不同内容 ---
+      if (id(current_page) == 1) {
+        // ===================================
+        // ============ 页面 1: 传感器数据概览 =============
+        // ===================================
+        int x1 = 15, x2 = 415;
+        int y_pos = 70;
+        int line_height = 50;
+        int icon_offset_x = 0;
+        int label_offset_x = 45;
+        int value_offset_x = 369;
+
+        // 新增：用于标题中，图标的固定X轴偏移量
+        // 您可以调整这个值来改变文字和图标的间距
+        int title_icon_offset_x = 260;
+
+
+        // --- 模块: 书房人员状态 (红色主题) ---
+        // 修改: 使用固定的偏移量来放置图标，避免崩溃
+        it.printf(x1, y_pos, id(font_medium), COLOR_RED, TextAlign::TOP_LEFT, "Bedroom Status");
+        it.printf(x1 + title_icon_offset_x - 70, y_pos, id(font_icon), COLOR_RED, TextAlign::TOP_LEFT, "\U000F02E3");
+        y_pos += 35;
+        it.line(x1, y_pos-5, x1 + 370, y_pos-5, COLOR_RED);
+
+        // (模块内部传感器条目保持原样)
+        // 光照度
+        it.printf(x1 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_RED, TextAlign::CENTER_LEFT, "\U000F141E");
+        it.printf(x1 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "illuminance");
+        if (id(ha_illuminance).has_state()) {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.0f lx", id(ha_illuminance).state);
+        } else {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+        // 目标距离
+        it.printf(x1 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_RED, TextAlign::CENTER_LEFT, "\U000F048C");
+        it.printf(x1 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Distance");
+        if (id(ha_object_distance).has_state()) {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.2f m", id(ha_object_distance).state);
+        } else {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+        // 心率
+        it.printf(x1 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_RED, TextAlign::CENTER_LEFT, "\U000F0972");
+        it.printf(x1 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Heart Rate");
+        if (id(ha_heart_rate).has_state()) {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.0f bpm", id(ha_heart_rate).state);
+        } else {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+        // 呼吸率
+        it.printf(x1 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_RED, TextAlign::CENTER_LEFT, "\U000F0566");
+        it.printf(x1 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Respiratory");
+        if (id(ha_respiratory_rate).has_state()) {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.0f rpm", id(ha_respiratory_rate).state);
+        } else {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height + 10;
+
+        // --- 模块: 阳台牵牛花 (红色主题) ---
+        // 修改: 使用固定的偏移量来放置图标
+        it.printf(x1, y_pos, id(font_medium), COLOR_RED, TextAlign::TOP_LEFT, "Balcony Petunia");
+        it.printf(x1 + title_icon_offset_x - 80, y_pos, id(font_icon), COLOR_RED, TextAlign::TOP_LEFT, "\U000F0531");
+        y_pos += 35;
+        it.line(x1, y_pos-5, x1 + 370, y_pos-5, COLOR_RED);
+
+        // (模块内部传感器条目保持原样)
+        // 土壤湿度
+        it.printf(x1 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_RED, TextAlign::CENTER_LEFT, "\U000F058E");
+        it.printf(x1 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Soil Moisture");
+        if (id(ha_soil_moisture).has_state()) {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%s", id(ha_soil_moisture).state.c_str());
+        } else {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+        // 电池电量
+        it.printf(x1 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_RED, TextAlign::CENTER_LEFT, "\U000F0079");
+        it.printf(x1 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Soil Sensor Battery");
+        if (id(ha_soil_battery).has_state()) {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.0f %%", id(ha_soil_battery).state);
+        } else {
+          it.printf(x1 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+        y_pos = 70; // 重置右列 Y 坐标
+        // --- 模块: 全屋用电 (蓝色主题) ---
+        // 修改: 使用固定的偏移量来放置图标
+        it.printf(x2, y_pos, id(font_medium), COLOR_BLUE, TextAlign::TOP_LEFT, "Total Power");
+        it.printf(x2 + title_icon_offset_x - 125, y_pos, id(font_icon), COLOR_BLUE, TextAlign::TOP_LEFT, "\U000F02DC");
+        y_pos += 35;
+        it.line(x2, y_pos-5, x2 + 370, y_pos-5, COLOR_BLUE);
+
+        // (模块内部传感器条目保持原样)
+        // 电压
+        it.printf(x2 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_BLUE, TextAlign::CENTER_LEFT, "\U000F0241");
+        it.printf(x2 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Voltage");
+        if (id(ha_em_voltage).has_state()) {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.1f V", id(ha_em_voltage).state);
+        } else {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+        // CH1 功率
+        it.printf(x2 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_BLUE, TextAlign::CENTER_LEFT, "\U000F06A5");
+        it.printf(x2 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "CH-1 Power");
+        if (id(ha_em_power_1).has_state()) {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.1f W", id(ha_em_power_1).state);
+        } else {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+        // CH1 电流
+        it.printf(x2 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_BLUE, TextAlign::CENTER_LEFT, "\U000F095B");
+        it.printf(x2 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "CH-1 Current");
+        if (id(ha_em_current_1).has_state()) {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.2f A", id(ha_em_current_1).state);
+        } else {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+        // 总能耗
+        it.printf(x2 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_BLUE, TextAlign::CENTER_LEFT, "\U000F1904");
+        it.printf(x2 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Total Energy");
+        if (id(ha_em_energy_total).has_state()) {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.2f kWh", id(ha_em_energy_total).state);
+        } else {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height + 10;
+
+        // --- 模块: 设备功耗 (蓝色主题) ---
+        // 修改: 使用固定的偏移量来放置图标
+        it.printf(x2, y_pos, id(font_medium), COLOR_BLUE, TextAlign::TOP_LEFT, "Living Room Power");
+        it.printf(x2 + title_icon_offset_x - 45, y_pos, id(font_icon), COLOR_BLUE, TextAlign::TOP_LEFT, "\U000F0FB0");
+        y_pos += 35;
+        it.line(x2, y_pos-5, x2 + 370, y_pos-5, COLOR_BLUE);
+
+        // (模块内部传感器条目保持原样)
+        // 风扇功耗 (原 Relay Consumption)
+        it.printf(x2 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_BLUE, TextAlign::CENTER_LEFT, "\U000F1A89");
+        it.printf(x2 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Fan Power");
+        if (id(ha_relay_energy_1).has_state()) {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.2f kWh", id(ha_relay_energy_1).state);
+        } else {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+        // 继电器总能耗 (原 Relay Energy)
+        it.printf(x2 + icon_offset_x, y_pos + line_height/2, id(font_icon), COLOR_BLUE, TextAlign::CENTER_LEFT, "\U000F06A5");
+        it.printf(x2 + label_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Air Purifier Power");
+        if (id(ha_relay_energy_2).has_state()) {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.2f kWh", id(ha_relay_energy_2).state);
+        } else {
+          it.printf(x2 + value_offset_x, y_pos + line_height/2, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "N/A");
+        }
+        y_pos += line_height;
+
+      } else if (id(current_page) == 2) {
+        // ===================================
+        // ============ 页面 2: 开关控制（白底方案）=============
+        // ===================================
+        
+        int card_width = 240, card_height = 110, card_gap = 25;
+        int vertical_gap = 15;
+        int x_start = 15, y_start = 65;
+        int x = x_start, y = y_start;
+
+        auto draw_switch_card_white = [&](int cx, int cy, const char* title, const char* icon, bool state) {
+          if (state) {
+            // ON: 绿色背景
+            it.filled_rectangle(cx, cy, card_width, card_height, COLOR_GREEN);
+            it.printf(cx + 15, cy + 20, id(font_small_bold), COLOR_WHITE, TextAlign::TOP_LEFT, title);
+            it.printf(cx + card_width - 45, cy + card_height / 2, id(font_icon), COLOR_WHITE, TextAlign::CENTER, icon);
+            it.printf(cx + 15, cy + card_height - 20, id(font_large), COLOR_WHITE, TextAlign::BOTTOM_LEFT, "ON");
+          } else {
+            // OFF: 白色背景 + 黑色边框
+            it.filled_rectangle(cx, cy, card_width, card_height, COLOR_WHITE);
+            it.rectangle(cx, cy, card_width, card_height, COLOR_BLACK);
+            it.rectangle(cx+1, cy+1, card_width-2, card_height-2, COLOR_BLACK);
+            it.printf(cx + 15, cy + 20, id(font_small_bold), COLOR_BLACK, TextAlign::TOP_LEFT, title);
+            it.printf(cx + card_width - 45, cy + card_height / 2, id(font_icon), COLOR_BLACK, TextAlign::CENTER, icon);
+            it.printf(cx + 15, cy + card_height - 20, id(font_large), COLOR_BLACK, TextAlign::BOTTOM_LEFT, "OFF");
+          }
+        };
+
+        draw_switch_card_white(x, y, "MP3 Play/Stop", "\U000F040E", id(g_iot_switch_1_state));
+        x += card_width + card_gap;
+        draw_switch_card_white(x, y, "MP3 Next", "\U000F04AD", id(g_iot_switch_2_state));
+        x += card_width + card_gap;
+        draw_switch_card_white(x, y, "MP3 Previous", "\U000F04AE", id(g_iot_switch_3_state));
+
+        x = x_start;
+        y += card_height + vertical_gap;
+        draw_switch_card_white(x, y, "LED Strip ON/Effects", "\U000F1051", id(g_led_button_1_state));
+        x += card_width + card_gap;
+        draw_switch_card_white(x, y, "LED Strip OFF Button", "\U000F1A4B", id(g_led_button_2_state));
+        x += card_width + card_gap;
+        draw_switch_card_white(x, y, "FAN Button", "\U000F0210", id(g_led_button_3_state));
+
+        // 气体传感器（保持蓝色）
+        x = x_start;
+        y += card_height + vertical_gap;
+        int gas_card_width = 770;
+        int gas_card_height = 135;
+        it.filled_rectangle(x, y, gas_card_width, gas_card_height, COLOR_BLUE);
+        it.printf(x + 15, y + 10, id(font_medium), COLOR_WHITE, TextAlign::TOP_LEFT, "Living Room Air Quality");
+
+        int gas_x1 = x + 100, gas_x2 = x + 420;
+        int gas_y1 = y + 70, gas_y2 = y + 105;
+
+        it.printf(gas_x1, gas_y1, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F18F4");
+        if (id(ha_gas_co).has_state()) {
+          it.printf(gas_x1 + 40, gas_y1, id(font_small_bold), COLOR_WHITE, TextAlign::CENTER_LEFT, "CO: %.2f ppm", id(ha_gas_co).state);
+        }
+        it.printf(gas_x2, gas_y1, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F18F4");
+        if (id(ha_gas_no2).has_state()) {
+          it.printf(gas_x2 + 40, gas_y1, id(font_small_bold), COLOR_WHITE, TextAlign::CENTER_LEFT, "NO2: %.2f ppm", id(ha_gas_no2).state);
+        }
+        it.printf(gas_x1, gas_y2, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F18F4");
+        if (id(ha_gas_ethanol).has_state()) {
+          it.printf(gas_x1 + 40, gas_y2, id(font_small_bold), COLOR_WHITE, TextAlign::CENTER_LEFT, "Ethanol: %.2f ppm", id(ha_gas_ethanol).state);
+        }
+        it.printf(gas_x2, gas_y2, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F18F4");
+        if (id(ha_gas_voc).has_state()) {
+          it.printf(gas_x2 + 40, gas_y2, id(font_small_bold), COLOR_WHITE, TextAlign::CENTER_LEFT, "VOC Index: %.0f", id(ha_gas_voc).state);
+        }
+
+      } else if (id(current_page) == 3) {
+        // ===================================
+        // ============ 页面 3: 传感器数据（黄色主题变体）=============
+        // ===================================
+        // 设计思路：使用黄色作为主题色，布局改为横向卡片
+        // 屏幕尺寸：800x480，标题栏占45px，可用高度435px
+        
+        int y_pos = 70;
+        int card_height = 130;  // 增加10个单位
+        int card_gap = 12;
+        
+        // --- 卡片1：书房状态（黄色主题）---
+        it.filled_rectangle(15, y_pos, 370, card_height, COLOR_YELLOW);
+        it.printf(30, y_pos + 12, id(font_medium), COLOR_BLACK, TextAlign::TOP_LEFT, "Bedroom Status");
+        it.printf(340, y_pos + 12, id(font_icon), COLOR_BLACK, TextAlign::TOP_LEFT, "\U000F02E3");
+        
+        int data_y = y_pos + 30;
+        int line_h = 35;  // 增加行高，让图标分散一些
+        // 呼吸
+        data_y += line_h;
+        it.printf(35, data_y, id(font_icon), COLOR_BLACK, TextAlign::CENTER_LEFT, "\U000F0566");
+        it.printf(75, data_y, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Respiratory");
+        if (id(ha_object_distance).has_state()) {
+          it.printf(350, data_y, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.2f m", id(ha_respiratory_rate).state);
+        }
+        // 心率
+        data_y += line_h;
+        it.printf(35, data_y, id(font_icon), COLOR_BLACK, TextAlign::CENTER_LEFT, "\U000F0972");
+        it.printf(75, data_y, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_LEFT, "Heart Rate");
+        if (id(ha_heart_rate).has_state()) {
+          it.printf(350, data_y, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.0f bpm", id(ha_heart_rate).state);
+        }
+        
+        // --- 卡片2：阳台植物（绿色主题）---
+        it.filled_rectangle(400, y_pos, 385, card_height, COLOR_GREEN);
+        it.printf(410, y_pos + 12, id(font_medium), COLOR_WHITE, TextAlign::TOP_LEFT, "Balcony Petunia");
+        it.printf(745, y_pos + 12, id(font_icon), COLOR_WHITE, TextAlign::TOP_LEFT, "\U000F0531");  // 往里移动10px
+        
+        data_y = y_pos + 65;
+        it.printf(420, data_y, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F058E");
+        it.printf(460, data_y, id(font_small_bold), COLOR_WHITE, TextAlign::CENTER_LEFT, "Soil Moisture");
+        if (id(ha_soil_moisture).has_state()) {
+          it.printf(745, data_y, id(font_small_bold), COLOR_WHITE, TextAlign::CENTER_RIGHT, "%s", id(ha_soil_moisture).state.c_str());
+        }
+        
+        data_y += 32;
+        it.printf(420, data_y, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F0079");
+        it.printf(460, data_y, id(font_small_bold), COLOR_WHITE, TextAlign::CENTER_LEFT, "Battery");
+        if (id(ha_soil_battery).has_state()) {
+          it.printf(745, data_y, id(font_small_bold), COLOR_WHITE, TextAlign::CENTER_RIGHT, "%.0f%%", id(ha_soil_battery).state);
+        }
+        
+        y_pos += card_height + card_gap + 10;  // 蓝色块往下移动10个单位
+        
+        // --- 卡片3：全屋用电（蓝色大卡片）---
+        it.filled_rectangle(15, y_pos, 770, 125, COLOR_BLUE);
+        it.printf(30, y_pos + 12, id(font_medium), COLOR_WHITE, TextAlign::TOP_LEFT, "Total Power");
+        it.printf(740, y_pos + 12, id(font_icon), COLOR_WHITE, TextAlign::TOP_LEFT, "\U000F02DC");
+        
+        // 4列布局 - 调整为更紧凑居中的布局
+        int col_width = 100;  // 减小列宽，让内容更紧凑
+        int start_x = 240;     // 整体向右移动，更居中
+        data_y = y_pos + 58;  // 图标位置
+        
+        // 电压
+        it.printf(start_x, data_y, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F0241");
+        if (id(ha_em_voltage).has_state()) {
+          it.printf(start_x - 10, data_y + 32, id(font_medium), COLOR_WHITE, TextAlign::TOP_LEFT, "%.1fV", id(ha_em_voltage).state);
+        }
+        
+        // 功率
+        it.printf(start_x + col_width, data_y, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F06A5");
+        if (id(ha_em_power_1).has_state()) {
+          it.printf(start_x - 10+ col_width, data_y + 32, id(font_medium), COLOR_WHITE, TextAlign::TOP_LEFT, "%.1fW", id(ha_em_power_1).state);
+        }
+        
+        // 电流
+        it.printf(start_x + col_width*2, data_y, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F095B");
+        if (id(ha_em_current_1).has_state()) {
+          it.printf(start_x - 10+ col_width*2, data_y + 32, id(font_medium), COLOR_WHITE, TextAlign::TOP_LEFT, "%.2fA", id(ha_em_current_1).state);
+        }
+        
+        // 总电量
+        it.printf(start_x + col_width*3 + 10, data_y, id(font_icon), COLOR_WHITE, TextAlign::CENTER_LEFT, "\U000F1904");
+        if (id(ha_em_energy_total).has_state()) {
+          it.printf(start_x - 15+ col_width*3, data_y + 32, id(font_medium), COLOR_WHITE, TextAlign::TOP_LEFT, "%.2fkWh", id(ha_em_energy_total).state);
+        }
+        
+        y_pos += 125 + card_gap;
+        
+        // --- 卡片4和5：客厅设备（横向排列）---
+        int small_card_width = 370;
+        int small_card_height = 85;
+        
+        // 卡片4：风扇功耗
+        it.filled_rectangle(15, y_pos, small_card_width, small_card_height, COLOR_WHITE);
+        it.rectangle(15, y_pos, small_card_width, small_card_height, COLOR_BLUE);
+        it.rectangle(16, y_pos+1, small_card_width-2, small_card_height-2, COLOR_BLUE);
+        
+        it.printf(30, y_pos + 10, id(font_medium), COLOR_BLUE, TextAlign::TOP_LEFT, "Fan Power");  // 往上移动
+        data_y = y_pos + 60;  // 往下移动
+        it.printf(40, data_y, id(font_icon), COLOR_BLUE, TextAlign::CENTER_LEFT, "\U000F1A89");
+        if (id(ha_relay_energy_1).has_state()) {
+          it.printf(360, data_y, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.2f kWh", id(ha_relay_energy_1).state);
+        }
+        
+        // 卡片5：空气净化器功耗
+        it.filled_rectangle(415, y_pos, small_card_width, small_card_height, COLOR_WHITE);
+        it.rectangle(415, y_pos, small_card_width, small_card_height, COLOR_BLUE);
+        it.rectangle(416, y_pos+1, small_card_width-2, small_card_height-2, COLOR_BLUE);
+        
+        it.printf(430, y_pos + 10, id(font_medium), COLOR_BLUE, TextAlign::TOP_LEFT, "Air Purifier");  // 往上移动
+        data_y = y_pos + 60;  // 往下移动
+        it.printf(440, data_y, id(font_icon), COLOR_BLUE, TextAlign::CENTER_LEFT, "\U000F06A5");
+        if (id(ha_relay_energy_2).has_state()) {
+          it.printf(760, data_y, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER_RIGHT, "%.2f kWh", id(ha_relay_energy_2).state);
+        }
+      }
+
+      // --- 底部信息 (通用) ---
+      if (id(ha_time).now().is_valid()) {
+        it.strftime(400, 470, id(font_small_bold), COLOR_BLACK, TextAlign::CENTER, "Last Update:      %Y-%m-%d %H:%M:%S", id(ha_time).now());
+      }
+

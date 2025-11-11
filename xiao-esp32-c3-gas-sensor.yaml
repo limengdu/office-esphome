@@ -1,0 +1,54 @@
+substitutions:
+  name: "xiao-esp32-c3-gas-sensor"
+  friendly_name: "XIAO ESP32-C3 Gas Sensor"
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  name_add_mac_suffix: true
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "hh54BnyzM335J5CGV9tN65u7+SPRKOeFR6PNXvp698g="
+
+ota:
+  - platform: esphome
+    password: "bc91fb2f17b317e0f936b1efba8f5ff0"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Xiao-Esp32-C3-Gas-Sensor"
+    password: "fUtZCRkn7B0W"
+
+captive_portal:
+
+i2c:
+  - id: gas_bus
+    sda: GPIO6
+    scl: GPIO7
+    scan: true
+
+sensor:
+  - platform: grove_gas_mc_v2
+    i2c_id: gas_bus
+    nitrogen_dioxide:
+      name: "Nitrogen Dioxide"
+    ethanol:
+      name: "Ethanol"
+    carbon_monoxide:
+      name: "Carbon Monoxide"
+    tvoc:
+      name: "Volatile Organic Compounds"

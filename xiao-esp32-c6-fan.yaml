@@ -1,0 +1,150 @@
+substitutions:
+  name: xiao-esp32-c6-fan
+  friendly_name: XIAO ESP32-C6 Fan
+  pin_ia: GPIO1  # Forward pin
+  pin_ib: GPIO0  # Reverse pin
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  name_add_mac_suffix: true
+
+esp32:
+  board: esp32-c6-devkitc-1
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "C1nEhEzWGDb8Cr2qWOyInTzoG3qQu05odRualN2IML0="
+
+ota:
+  - platform: esphome
+    password: "8ec5c622e5be3a745757032bc98677ca"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Xiao-Esp32-C6-Fan"
+    password: "IK7Qn9N70rM2"
+
+captive_portal:
+
+globals:
+  # Stores the desired motor speed (0.0 to 1.0).
+  - id: g_motor_speed
+    type: float
+    restore_value: yes
+    initial_value: '1.0'
+
+  # NEW: Manually track the motor's state.
+  # 0 = Stopped, 1 = Forward (Open), 2 = Reverse (Close)
+  - id: g_motor_direction
+    type: int
+    restore_value: no # Always start in stopped state on boot
+    initial_value: '0'
+
+# Define the output pins using the 'ledc' platform for PWM speed control.
+output:
+  - platform: ledc
+    id: output_ia
+    pin: ${pin_ia}
+    frequency: 1000 Hz
+  - platform: ledc
+    id: output_ib
+    pin: ${pin_ib}
+    frequency: 1000 Hz
+
+# Add a 'number' component (slider) for speed control.
+number:
+  - platform: template
+    name: "${friendly_name} Speed"
+    id: motor_speed_slider
+    optimistic: true
+    min_value: 0.0
+    max_value: 1.0
+    step: 0.1
+    mode: slider
+    set_action:
+      # First, save the new speed value from the slider (x).
+      - globals.set:
+          id: g_motor_speed
+          value: !lambda 'return x;'
+      # Then, apply the new speed LIVE if the motor is running.
+      - if:
+          # Check our state variable to see if motor is running forward.
+          condition:
+            lambda: 'return id(g_motor_direction) == 1;'
+          then:
+            # If so, update the forward pin's speed.
+            - output.set_level:
+                id: output_ia
+                level: !lambda 'return x;'
+      - if:
+          # Check our state variable to see if motor is running in reverse.
+          condition:
+            lambda: 'return id(g_motor_direction) == 2;'
+          then:
+            # If so, update the reverse pin's speed.
+            - output.set_level:
+                id: output_ib
+                level: !lambda 'return x;'
+
+# Use the "cover" component to control the motor.
+cover:
+  - platform: template
+    name: "${friendly_name}"
+    optimistic: true
+    
+    # Action for the "OPEN" button (Forward)
+    open_action:
+      - logger.log: "Command: Motor Forward (Open)"
+      # Set our state variable to "Forward" (1).
+      - globals.set:
+          id: g_motor_direction
+          value: '1'
+      # Apply the stored speed to the forward pin.
+      - output.set_level:
+          id: output_ia
+          level: !lambda 'return id(g_motor_speed);'
+      - output.set_level:
+          id: output_ib
+          level: 0.0
+
+    # Action for the "CLOSE" button (Reverse)
+    close_action:
+      - logger.log: "Command: Motor Reverse (Close)"
+      # Set our state variable to "Reverse" (2).
+      - globals.set:
+          id: g_motor_direction
+          value: '2'
+      # Apply the stored speed to the reverse pin.
+      - output.set_level:
+          id: output_ia
+          level: 0.0
+      - output.set_level:
+          id: output_ib
+          level: !lambda 'return id(g_motor_speed);'
+
+    # Action for the "STOP" button
+    stop_action:
+      - logger.log: "Command: Motor Stop"
+      # Set our state variable to "Stopped" (0).
+      - globals.set:
+          id: g_motor_direction
+          value: '0'
+      # Turn both pins off.
+      - output.set_level:
+          id: output_ia
+          level: 0.0
+      - output.set_level:
+          id: output_ib
+          level: 0.0
+
