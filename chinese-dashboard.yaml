@@ -1,0 +1,555 @@
+views:
+  - title: 主页
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO ESP32-S3 Sense 摄像头 - 卧室
+            heading_style: title
+            icon: mdi:camera
+          - camera_view: live
+            fit_mode: cover
+            type: picture-glance
+            title: XIAO ESP32-S3 Sense 摄像头 - 卧室
+            image: https://demo.home-assistant.io/stub_config/kitchen.png
+            entities:
+              - entity: zone.home
+            camera_image: camera.xiao_esp32_s3_camera_8f2ed4_my_camera
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/2aa1ab87ef37266566c9d4f41eb12b10
+              media_content_type: image/jpeg
+              metadata:
+                title: 111.jpg
+                thumbnail: /api/image/serve/2aa1ab87ef37266566c9d4f41eb12b10/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: heading
+            heading: Seeed MR60BHA2 - 卧室状态
+            heading_style: title
+            icon: mdi:bed
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 3
+            entity: light.seeedstudio_mr60bha2_kit_0336ec_seeed_mr60bha2_rgb_light
+            name: 指示灯
+            color: purple
+            vertical: false
+            features:
+              - type: light-brightness
+              - type: toggle
+            features_position: bottom
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_mr60bha2_kit_0336ec_seeed_mr60bha2_illuminance
+            detail: 1
+            name: 卧室光照度
+            unit: lux
+            grid_options:
+              columns: 6
+              rows: 3
+          - graph: line
+            type: sensor
+            entity: >-
+              sensor.seeedstudio_mr60bha2_kit_0336ec_distance_to_detection_object
+            detail: 1
+            name: 人体距离
+            unit: cm
+          - type: tile
+            entity: binary_sensor.seeedstudio_mr60bha2_kit_0336ec_person_information
+            name: 是否有人
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: sensor.seeedstudio_mr60bha2_kit_0336ec_target_number
+            name: 人数
+            color: brown
+            vertical: false
+            features_position: bottom
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_mr60bha2_kit_0336ec_real_time_heart_rate
+            detail: 1
+            name: 实时心率
+            unit: bpm
+            grid_options:
+              columns: 6
+              rows: 3
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_mr60bha2_kit_0336ec_real_time_respiratory_rate
+            detail: 1
+            name: 实时呼吸率
+            grid_options:
+              columns: 6
+              rows: 3
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: XIAO ESP32-C6 LED 按钮 - LED 灯带控制
+            icon: mdi:led-strip-variant
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.xiao_esp32_c6_led_button_b4a83c_lighted_button_1
+            name: 切换灯带效果
+            icon: mdi:led-strip
+            color: light-green
+            vertical: false
+            features_position: bottom
+            features:
+              - type: toggle
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.xiao_esp32_c6_led_button_b4a83c_lighted_button_3
+            name: 关闭灯带
+            icon: mdi:led-strip-variant-off
+            color: lime
+            vertical: false
+            features_position: bottom
+            features:
+              - type: toggle
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/73357bc8a5d43814dcb9ff0be661ff11
+              media_content_type: image/jpeg
+              metadata:
+                title: nanoleaf-floor-lamp.jpg
+                thumbnail: /api/image/serve/73357bc8a5d43814dcb9ff0be661ff11/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: light
+            entity: light.xiao_esp32_c3_led_strip_a39d00_xiao_esp32_c3_led_strip
+            name: XIAO ESP32-C3 LED 灯带 - 卧室氛围灯
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 4
+            entity: light.xiao_esp32_c3_led_strip_a39d00_xiao_esp32_c3_led_strip
+            name: LED 灯带 - 卧室氛围灯
+            color: accent
+            vertical: false
+            features:
+              - type: light-brightness
+              - type: toggle
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO 土壤湿度传感器 - 阳台矮牵牛
+            heading_style: title
+            icon: mdi:flower
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_soil_moisture_8a2da8_battery_measurement
+            grid_options:
+              columns: 12
+              rows: 2
+            detail: 1
+            name: 传感器电量
+            unit: V
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 2
+            entity: sensor.xiao_soil_moisture_8a2da8_soil_moisture_status
+            name: 土壤状况
+            icon: mdi:water-percent
+            color: red
+            vertical: false
+            features_position: bottom
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_soil_moisture_8a2da8_wifi_singnal_strength
+            detail: 1
+            name: 传感器信号
+            unit: dBm
+          - type: history-graph
+            entities:
+              - entity: sensor.xiao_soil_moisture_8a2da8_soil_moisture_status
+            title: 土壤湿度状态
+            logarithmic_scale: true
+            grid_options:
+              columns: 12
+              rows: 4
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: Seeed 物联网按钮 - MP3 播放器控制
+            icon: mdi:account-music
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.seeedstudio_iot_button_41a448_switch_1
+            name: 播放/暂停
+            icon: mdi:play-pause
+            color: indigo
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.seeedstudio_iot_button_41a448_switch_2
+            name: 下一曲
+            icon: mdi:skip-next-circle-outline
+            color: blue
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.seeedstudio_iot_button_41a448_switch_3
+            name: 上一曲
+            icon: mdi:skip-previous-circle-outline
+            color: light-blue
+            vertical: false
+            features_position: bottom
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/545553b1a928a58fa0d5692117df8fbb
+              media_content_type: image/jpeg
+              metadata:
+                title: speakers.jpg
+                thumbnail: /api/image/serve/545553b1a928a58fa0d5692117df8fbb/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO ESP32-C3 MP3 播放器
+            heading_style: title
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 1
+            entity: button.xiao_esp32_c6_led_button_be7a94_play
+            name: 播放
+            color: blue
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_stop
+            name: 停止
+            color: pink
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_previous
+            name: 上一曲
+            color: cyan
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_next
+            name: 下一曲
+            color: cyan
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: sensor.xiao_esp32_c6_led_button_be7a94_current_track
+            name: 当前曲目
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_volume_down
+            name: 音量减
+            color: orange
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_volume_up
+            name: 音量加
+            color: orange
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: select.xiao_esp32_c6_led_button_be7a94_play_mode
+            name: 播放模式
+            color: lime
+            vertical: false
+            features_position: bottom
+            grid_options:
+              columns: 12
+              rows: 2
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_active_power_1
+            detail: 1
+            name: MP3 播放器功率
+            unit: W
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_energy_1
+            detail: 1
+            name: MP3 播放器能耗
+            unit: kWh
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: XIAO ESP32-C3 气体传感器 - 客厅
+            icon: mdi:meter-gas
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_esp32_c3_gas_sensor_a0de2c_volatile_organic_compounds
+            detail: 1
+            name: 挥发性有机物
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_esp32_c3_gas_sensor_a0de2c_carbon_monoxide
+            detail: 1
+            name: 一氧化碳
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_esp32_c3_gas_sensor_a0de2c_nitrogen_dioxide
+            detail: 1
+            name: 二氧化氮
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_esp32_c3_gas_sensor_a0de2c_ethanol
+            detail: 1
+            name: 乙醇
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/5f7c743b8467ea718cc351005dabcf80
+              media_content_type: image/jpeg
+              metadata:
+                title: >-
+                  Where-To-Place-Natural-Gas-Detector-In-Industry-Production-Workplace-2.jpg
+                thumbnail: /api/image/serve/5f7c743b8467ea718cc351005dabcf80/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: XIAO ESP32-C6 风扇
+            icon: mdi:fan
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 2
+            entity: switch.xiao_esp32_c6_led_button_b4a83c_lighted_button_2
+            name: LED 按钮 3 - 控制
+            icon: mdi:toggle-switch-off
+            color: yellow
+            vertical: false
+            features_position: bottom
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_active_power_2
+            detail: 1
+            name: 风扇功率
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_energy_2
+            detail: 1
+            name: 风扇能耗
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 3
+            entity: cover.xiao_esp32_c6_fan_b4a744_xiao_esp32_c6_fan
+            name: 风扇
+            icon: mdi:fan
+            color: purple
+            vertical: false
+            features:
+              - type: cover-open-close
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO 双通道 Wi-Fi 交流电能表 - 全屋
+            heading_style: title
+            icon: mdi:home-battery
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_active_power_1
+            detail: 1
+            name: 家庭用电功率
+            unit: W
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_current_1
+            detail: 1
+            name: 家庭用电电流
+            unit: A
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_energy_total
+            detail: 1
+            name: 家庭用电能耗
+            unit: kWh
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_voltage
+            detail: 1
+            name: 家庭电压
+            unit: V
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/8eb76b9e96edcd7a17f517381422a8fe
+              media_content_type: image/png
+              metadata:
+                title: 333.png
+                thumbnail: /api/image/serve/8eb76b9e96edcd7a17f517381422a8fe/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO 双通道智能继电器 - MP3 与风扇控制
+            heading_style: title
+            icon: mdi:nintendo-switch
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_current
+            detail: 1
+            name: 继电器工作电流
+            unit: A
+            grid_options:
+              columns: 12
+              rows: 2
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_frequency
+            detail: 1
+            name: 继电器电网频率
+            unit: Hz
+            grid_options:
+              columns: 12
+              rows: 2
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_energy
+            detail: 1
+            name: 继电器能耗
+            unit: kWh
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_power
+            detail: 1
+            name: 继电器功率
+            unit: W
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_voltage
+            detail: 1
+            name: 继电器电压
+            unit: V
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_wifi_singnal_strength
+            detail: 1
+            name: 信号
+            unit: dBm
+      - type: grid
+        cards:
+          - type: heading
+            heading: reTerminal E1002 - 电子墨水屏仪表盘
+            heading_style: title
+            icon: mdi:tablet-dashboard
+          - graph: line
+            type: sensor
+            entity: sensor.reterminal_e1002_battery_voltage
+            detail: 1
+            name: 电池电压
+          - graph: line
+            type: sensor
+            entity: sensor.reterminal_e1002_battery_level
+            detail: 1
+            name: 电池电量
+          - graph: line
+            type: sensor
+            entity: sensor.reterminal_e1002_temperature
+            detail: 1
+            name: 温度
+          - graph: line
+            type: sensor
+            entity: sensor.reterminal_e1002_relative_humidity
+            detail: 1
+            name: 湿度
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/27abcaac6b2101761cac84d2f4cee928
+              media_content_type: image/jpeg
+              metadata:
+                title: 222.jpg
+                thumbnail: /api/image/serve/27abcaac6b2101761cac84d2f4cee928/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+    badges:
+      - type: entity
+        show_name: false
+        show_state: true
+        show_icon: true
+        entity: sensor.sun_next_dawn
+      - type: entity
+        show_name: false
+        show_state: true
+        show_icon: true
+        entity: sun.sun
+    cards:
+      - type: entities
+        entities:
+          - entity: switch.seeedstudio_iot_button_41a448_switch_1
+            name: 开关 1
+          - entity: switch.seeedstudio_iot_button_41a448_switch_2
+            name: 开关 2
+          - entity: switch.seeedstudio_iot_button_41a448_switch_3
+            name: 开关 3
+        title: Seeed Studio 物联网按钮 41a448
+      - type: entities
+        entities:
+          - entity: sensor.seeedstudio_2ch_em_bl0939_active_power_1
+            name: BL0939 有功功率 1
+          - entity: sensor.seeedstudio_2ch_em_bl0939_active_power_2
+            name: BL0939 有功功率 2
+          - entity: sensor.seeedstudio_2ch_em_bl0939_current_1
+            name: BL0939 电流 1
+          - entity: sensor.seeedstudio_2ch_em_bl0939_current_2
+            name: BL0939 电流 2
+          - entity: sensor.seeedstudio_2ch_em_bl0939_energy_1
+            name: BL0939 电能 1
+          - entity: sensor.seeedstudio_2ch_em_bl0939_energy_2
+            name: BL0939 电能 2
+          - entity: sensor.seeedstudio_2ch_em_bl0939_energy_total
+            name: BL0939 总电能
+          - entity: sensor.seeedstudio_2ch_em_bl0939_voltage
+            name: BL0939 电压
+        title: SeeedStudio-2CH-EM

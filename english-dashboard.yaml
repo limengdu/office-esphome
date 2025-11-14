@@ -1,0 +1,571 @@
+views:
+  - title: Home
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO ESP32-S3 Sense Camera - Bedroom
+            heading_style: title
+            icon: mdi:camera
+          - camera_view: live
+            fit_mode: cover
+            type: picture-glance
+            title: XIAO ESP32-S3 Sense Camera - Bedroom
+            image: https://demo.home-assistant.io/stub_config/kitchen.png
+            entities:
+              - entity: zone.home
+            camera_image: camera.xiao_esp32_s3_camera_8f2ed4_my_camera
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/2aa1ab87ef37266566c9d4f41eb12b10
+              media_content_type: image/jpeg
+              metadata:
+                title: 111.jpg
+                thumbnail: /api/image/serve/2aa1ab87ef37266566c9d4f41eb12b10/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: heading
+            heading: Seeed MR60BHA2 - Bedroom Status
+            heading_style: title
+            icon: mdi:bed
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 3
+            entity: light.seeedstudio_mr60bha2_kit_0336ec_seeed_mr60bha2_rgb_light
+            name: Indicator LED
+            color: purple
+            vertical: false
+            features:
+              - type: light-brightness
+              - type: toggle
+            features_position: bottom
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_mr60bha2_kit_0336ec_seeed_mr60bha2_illuminance
+            detail: 1
+            name: Bedroom Illuminance
+            unit: lux
+            grid_options:
+              columns: 6
+              rows: 3
+          - graph: line
+            type: sensor
+            entity: >-
+              sensor.seeedstudio_mr60bha2_kit_0336ec_distance_to_detection_object
+            detail: 1
+            name: People Distance
+            unit: cm
+          - type: tile
+            entity: binary_sensor.seeedstudio_mr60bha2_kit_0336ec_person_information
+            name: Is there anyone
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: sensor.seeedstudio_mr60bha2_kit_0336ec_target_number
+            name: People Number
+            color: brown
+            vertical: false
+            features_position: bottom
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_mr60bha2_kit_0336ec_real_time_heart_rate
+            detail: 1
+            name: Real-time heart rate
+            unit: bpm
+            grid_options:
+              columns: 6
+              rows: 3
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_mr60bha2_kit_0336ec_real_time_respiratory_rate
+            detail: 1
+            name: Real-time respiratory rate
+            grid_options:
+              columns: 6
+              rows: 3
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: XIAO ESP32-C6 LED Buttons - LED Strip Control
+            icon: mdi:led-strip-variant
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.xiao_esp32_c6_led_button_b4a83c_lighted_button_1
+            name: Change LED Strip Effect
+            icon: mdi:led-strip
+            color: light-green
+            vertical: false
+            features_position: bottom
+            features:
+              - type: toggle
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.xiao_esp32_c6_led_button_b4a83c_lighted_button_3
+            name: Turn off LED Strip
+            icon: mdi:led-strip-variant-off
+            color: lime
+            vertical: false
+            features_position: bottom
+            features:
+              - type: toggle
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/73357bc8a5d43814dcb9ff0be661ff11
+              media_content_type: image/jpeg
+              metadata:
+                title: nanoleaf-floor-lamp.jpg
+                thumbnail: /api/image/serve/73357bc8a5d43814dcb9ff0be661ff11/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: light
+            entity: light.xiao_esp32_c3_led_strip_a39d00_xiao_esp32_c3_led_strip
+            name: XIAO ESP32-C3 LED Strip - Bedroom Ambient Lighting
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 4
+            entity: light.xiao_esp32_c3_led_strip_a39d00_xiao_esp32_c3_led_strip
+            name: LED Strip - Bedroom Ambient Lighting
+            color: accent
+            vertical: false
+            features:
+              - type: light-brightness
+              - type: toggle
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO Soil Moisture - Balcony Petunia
+            heading_style: title
+            icon: mdi:flower
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_soil_moisture_8a2da8_battery_measurement
+            grid_options:
+              columns: 12
+              rows: 2
+            detail: 1
+            name: Sensor Battery
+            unit: V
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 2
+            entity: sensor.xiao_soil_moisture_8a2da8_soil_moisture_status
+            name: Soil Conditions
+            icon: mdi:water-percent
+            color: red
+            vertical: false
+            features_position: bottom
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_soil_moisture_8a2da8_wifi_singnal_strength
+            detail: 1
+            name: Sensor Singnal
+            unit: dBm
+          - type: history-graph
+            entities:
+              - entity: sensor.xiao_soil_moisture_8a2da8_soil_moisture_status
+            title: Soil Moisture Status
+            logarithmic_scale: true
+            grid_options:
+              columns: 12
+              rows: 4
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: Seeed IoT Button - MP3 Player Control
+            icon: mdi:account-music
+          - type: tile
+            entity: switch.seeedstudio_relay_9f59f8_relay_1_control
+            name: MP3 Player Switch
+            vertical: false
+            features_position: bottom
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.seeedstudio_iot_button_41a448_switch_1
+            name: Play/Stop
+            icon: mdi:play-pause
+            color: indigo
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.seeedstudio_iot_button_41a448_switch_2
+            name: Next
+            icon: mdi:skip-next-circle-outline
+            color: blue
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: switch.seeedstudio_iot_button_41a448_switch_3
+            name: Previous
+            icon: mdi:skip-previous-circle-outline
+            color: light-blue
+            vertical: false
+            features_position: bottom
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/545553b1a928a58fa0d5692117df8fbb
+              media_content_type: image/jpeg
+              metadata:
+                title: speakers.jpg
+                thumbnail: /api/image/serve/545553b1a928a58fa0d5692117df8fbb/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO ESP32-C3 MP3 Player
+            heading_style: title
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 1
+            entity: button.xiao_esp32_c6_led_button_be7a94_play
+            name: Play
+            color: blue
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_stop
+            name: Stop
+            color: pink
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_previous
+            name: Previous
+            color: cyan
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_next
+            name: Next
+            color: cyan
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: sensor.xiao_esp32_c6_led_button_be7a94_current_track
+            name: Current Track
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_volume_down
+            name: Vol Down
+            color: orange
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.xiao_esp32_c6_led_button_be7a94_volume_up
+            name: Vol Up
+            color: orange
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: select.xiao_esp32_c6_led_button_be7a94_play_mode
+            name: Play Mode
+            color: lime
+            vertical: false
+            features_position: bottom
+            grid_options:
+              columns: 12
+              rows: 2
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_active_power_1
+            detail: 1
+            name: MP3 Player Power
+            unit: W
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_energy_1
+            detail: 1
+            name: MP3 Player Energy
+            unit: kWh
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: XIAO ESP32-C3 Gas Sensor - Living Room
+            icon: mdi:meter-gas
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_esp32_c3_gas_sensor_a0de2c_volatile_organic_compounds
+            detail: 1
+            name: Volatile Organic Compounds
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_esp32_c3_gas_sensor_a0de2c_carbon_monoxide
+            detail: 1
+            name: Carbon Monoxide
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_esp32_c3_gas_sensor_a0de2c_nitrogen_dioxide
+            detail: 1
+            name: Nitrogen Dioxide
+          - graph: line
+            type: sensor
+            entity: sensor.xiao_esp32_c3_gas_sensor_a0de2c_ethanol
+            detail: 1
+            name: Ethanol
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/5f7c743b8467ea718cc351005dabcf80
+              media_content_type: image/jpeg
+              metadata:
+                title: >-
+                  Where-To-Place-Natural-Gas-Detector-In-Industry-Production-Workplace-2.jpg
+                thumbnail: /api/image/serve/5f7c743b8467ea718cc351005dabcf80/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: XIAO ESP32-C6 Fan
+            icon: mdi:fan
+          - type: tile
+            entity: switch.seeedstudio_relay_9f59f8_relay_2_control
+            name: Fan Switch
+            vertical: false
+            features_position: bottom
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 2
+            entity: switch.xiao_esp32_c6_led_button_b4a83c_lighted_button_2
+            name: LED Button 3 - Control
+            icon: mdi:toggle-switch-off
+            color: yellow
+            vertical: false
+            features_position: bottom
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_active_power_2
+            detail: 1
+            name: Fan Power
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_energy_2
+            detail: 1
+            name: Fan Energy
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 3
+            entity: cover.xiao_esp32_c6_fan_b4a744_xiao_esp32_c6_fan
+            name: Fan
+            icon: mdi:fan
+            color: purple
+            vertical: false
+            features:
+              - type: cover-open-close
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO 2-Channel Wi-Fi AC Energy Meter - House
+            heading_style: title
+            icon: mdi:home-battery
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_active_power_1
+            detail: 1
+            name: Household Power
+            unit: W
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_current_1
+            detail: 1
+            name: Househlod Current
+            unit: A
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_energy_total
+            detail: 1
+            name: Household Energy
+            unit: kWh
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_bl0939_voltage
+            detail: 1
+            name: Household Voltage
+            unit: V
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/8eb76b9e96edcd7a17f517381422a8fe
+              media_content_type: image/png
+              metadata:
+                title: 333.png
+                thumbnail: /api/image/serve/8eb76b9e96edcd7a17f517381422a8fe/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+      - type: grid
+        cards:
+          - type: heading
+            heading: XIAO 2-Channel Smart Relay - MP3 & Fan Control
+            heading_style: title
+            icon: mdi:nintendo-switch
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_current
+            detail: 1
+            name: Relay Operating Current
+            unit: A
+            grid_options:
+              columns: 12
+              rows: 2
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_frequency
+            detail: 1
+            name: Relay Electrical Frequency
+            unit: Hz
+            grid_options:
+              columns: 12
+              rows: 2
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_energy
+            detail: 1
+            name: Relay Energy
+            unit: kWh
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_power
+            detail: 1
+            name: Relay Power
+            unit: W
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_relay_9f59f8_socket_voltage
+            detail: 1
+            name: Relay Voltage
+            unit: V
+          - graph: line
+            type: sensor
+            entity: sensor.seeedstudio_2ch_em_wifi_singnal_strength
+            detail: 1
+            name: Singnal
+            unit: dBm
+      - type: grid
+        cards:
+          - type: heading
+            heading: reTerminal E1002 - ePaper Dashboard
+            heading_style: title
+            icon: mdi:tablet-dashboard
+          - graph: line
+            type: sensor
+            entity: sensor.reterminal_e1002_battery_voltage
+            detail: 1
+            name: Battery
+          - graph: line
+            type: sensor
+            entity: sensor.reterminal_e1002_battery_level
+            detail: 1
+            name: Battery Level
+          - graph: line
+            type: sensor
+            entity: sensor.reterminal_e1002_temperature
+            detail: 1
+            name: Temperature
+          - graph: line
+            type: sensor
+            entity: sensor.reterminal_e1002_relative_humidity
+            detail: 1
+            name: Humidity
+          - type: picture
+            image:
+              media_content_id: media-source://image_upload/27abcaac6b2101761cac84d2f4cee928
+              media_content_type: image/jpeg
+              metadata:
+                title: 222.jpg
+                thumbnail: /api/image/serve/27abcaac6b2101761cac84d2f4cee928/256x256
+                media_class: image
+                navigateIds:
+                  - {}
+                  - media_content_type: app
+                    media_content_id: media-source://image_upload
+    badges:
+      - type: entity
+        show_name: false
+        show_state: true
+        show_icon: true
+        entity: sensor.sun_next_dawn
+      - type: entity
+        show_name: false
+        show_state: true
+        show_icon: true
+        entity: sun.sun
+    cards:
+      - type: entities
+        entities:
+          - entity: switch.seeedstudio_iot_button_41a448_switch_1
+            name: Switch 1
+          - entity: switch.seeedstudio_iot_button_41a448_switch_2
+            name: Switch 2
+          - entity: switch.seeedstudio_iot_button_41a448_switch_3
+            name: Switch 3
+        title: Seeed Studio IoT Button 41a448
+      - type: entities
+        entities:
+          - entity: sensor.seeedstudio_2ch_em_bl0939_active_power_1
+            name: BL0939 Active Power 1
+          - entity: sensor.seeedstudio_2ch_em_bl0939_active_power_2
+            name: BL0939 Active Power 2
+          - entity: sensor.seeedstudio_2ch_em_bl0939_current_1
+            name: BL0939 Current 1
+          - entity: sensor.seeedstudio_2ch_em_bl0939_current_2
+            name: BL0939 Current 2
+          - entity: sensor.seeedstudio_2ch_em_bl0939_energy_1
+            name: BL0939 Energy 1
+          - entity: sensor.seeedstudio_2ch_em_bl0939_energy_2
+            name: BL0939 Energy 2
+          - entity: sensor.seeedstudio_2ch_em_bl0939_energy_total
+            name: BL0939 Energy Total
+          - entity: sensor.seeedstudio_2ch_em_bl0939_voltage
+            name: BL0939 Voltage
+        title: SeeedStudio-2CH-EM
