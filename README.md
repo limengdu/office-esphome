@@ -1,4 +1,4 @@
-# 🏠 Maker Faire 智能家居演示项目
+# 🏠 Maker Faire Smart Home Demo Project
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-ESPHome-blue?style=for-the-badge&logo=esphome" />
@@ -6,121 +6,121 @@
   <img src="https://img.shields.io/badge/Hardware-Seeed%20Studio-green?style=for-the-badge" />
 </p>
 
-> 🎪 **一个为 Maker Faire 打造的完整智能家居演示系统！**
+> 🎪 **A complete smart home demo system built for Maker Faire!**
 > 
-> 使用 Seeed Studio XIAO ESP32 系列开发板 + ESPHome + Home Assistant 构建的全功能智能家居解决方案。
+> A full-featured smart home solution built with Seeed Studio XIAO ESP32 series development boards + ESPHome + Home Assistant.
 
 ---
 
-## ✨ 项目亮点
+## ✨ Project Highlights
 
-- 🎯 **即插即用** - 所有配置开箱可用，轻松烧录
-- 🌈 **功能丰富** - 涵盖智能照明、环境监测、健康监护等多个场景
-- 📊 **可视化仪表盘** - 精美的电子墨水屏数据中心 + Home Assistant 控制面板
-- 🌐 **双语支持** - 提供中英文 Dashboard 配置
-- 🔧 **高度可定制** - 模块化设计，方便二次开发
-
----
-
-## 🎁 设备清单
-
-| 设备 | 芯片 | 功能 | 文件 |
-|------|------|------|------|
-| 📷 **XIAO ESP32-S3 Sense 摄像头** | ESP32-S3 | 卧室实时监控 | `xiao-esp32s3-camera.yaml` |
-| 🛏️ **MR60BHA2 毫米波雷达套件** | ESP32-C6 | 人体存在检测、心率、呼吸监测 | `mr60bha2.yaml` |
-| 🔘 **Seeed IoT 按钮** | ESP32-C6 | 三功能无线按钮（单击/双击/长按） | `seeed-iot-button.yaml` |
-| 💨 **XIAO 气体传感器** | ESP32-C3 | VOC、CO、NO₂、乙醇检测 | `xiao-esp32-c3-gas-sensor.yaml` |
-| 🌈 **XIAO LED 灯带控制器** | ESP32-C3 | WS2812 可寻址灯带（48颗灯珠） | `xiao-esp32-c3-led-strip.yaml` |
-| 🎵 **XIAO MP3 播放器** | ESP32-C3 | WT2605C 模块，支持 SD 卡播放 | `xiao-esp32-c3-mp3.yaml` |
-| 🌀 **XIAO 智能风扇** | ESP32-C6 | PWM 调速电机控制 | `xiao-esp32-c6-fan.yaml` |
-| 💡 **XIAO LED 发光按钮** | ESP32-C6 | 3路带灯按钮控制 | `xiao-esp32-c6-led-button.yaml` |
-| 🌱 **XIAO 土壤湿度传感器** | ESP32-C6 | 植物浇水提醒，支持校准 | `xiao-soil-moisture.yaml` |
-| 📺 **reTerminal E1002** | ESP32-S3 | 7.3寸彩色电子墨水屏仪表盘 | `reterminal-e1002.yaml` |
+- 🎯 **Plug and Play** - All configurations ready to use, easy to flash
+- 🌈 **Feature Rich** - Covers smart lighting, environmental monitoring, health monitoring, and more
+- 📊 **Visual Dashboard** - Beautiful e-paper data center + Home Assistant control panel
+- 🌐 **Bilingual Support** - Chinese and English Dashboard configurations included
+- 🔧 **Highly Customizable** - Modular design for easy secondary development
 
 ---
 
-## 🚀 快速开始
+## 🎁 Device List
 
-### 📋 前置要求
+| Device | Chip | Function | File |
+|--------|------|----------|------|
+| 📷 **XIAO ESP32-S3 Sense Camera** | ESP32-S3 | Bedroom real-time monitoring | `xiao-esp32s3-camera.yaml` |
+| 🛏️ **MR60BHA2 mmWave Radar Kit** | ESP32-C6 | Human presence detection, heart rate & breathing monitoring | `mr60bha2.yaml` |
+| 🔘 **Seeed IoT Button** | ESP32-C6 | Three-function wireless button (single/double/long press) | `seeed-iot-button.yaml` |
+| 💨 **XIAO Gas Sensor** | ESP32-C3 | VOC, CO, NO₂, Ethanol detection | `xiao-esp32-c3-gas-sensor.yaml` |
+| 🌈 **XIAO LED Strip Controller** | ESP32-C3 | WS2812 addressable LED strip (48 LEDs) | `xiao-esp32-c3-led-strip.yaml` |
+| 🎵 **XIAO MP3 Player** | ESP32-C3 | WT2605C module, supports SD card playback | `xiao-esp32-c3-mp3.yaml` |
+| 🌀 **XIAO Smart Fan** | ESP32-C6 | PWM speed-controlled motor | `xiao-esp32-c6-fan.yaml` |
+| 💡 **XIAO LED Lighted Button** | ESP32-C6 | 3-channel illuminated button control | `xiao-esp32-c6-led-button.yaml` |
+| 🌱 **XIAO Soil Moisture Sensor** | ESP32-C6 | Plant watering reminder with calibration | `xiao-soil-moisture.yaml` |
+| 📺 **reTerminal E1002** | ESP32-S3 | 7.3-inch color e-paper dashboard | `reterminal-e1002.yaml` |
 
-- ✅ [ESPHome](https://esphome.io/) 已安装（推荐使用 Home Assistant 插件版）
-- ✅ [Home Assistant](https://www.home-assistant.io/) 运行中
-- ✅ WiFi 网络环境
-- ✅ 上述硬件设备
+---
 
-### 🔧 安装步骤
+## 🚀 Quick Start
 
-#### 1️⃣ 克隆项目
+### 📋 Prerequisites
+
+- ✅ [ESPHome](https://esphome.io/) installed (Home Assistant add-on version recommended)
+- ✅ [Home Assistant](https://www.home-assistant.io/) running
+- ✅ WiFi network environment
+- ✅ Hardware devices listed above
+
+### 🔧 Installation Steps
+
+#### 1️⃣ Clone the Project
 
 ```bash
 git clone https://github.com/your-repo/maker_faire_demo.git
 cd maker_faire_demo
 ```
 
-#### 2️⃣ 创建 WiFi 配置文件
+#### 2️⃣ Create WiFi Configuration File
 
-在项目目录下创建 `secrets.yaml` 文件：
+Create a `secrets.yaml` file in the project directory:
 
 ```yaml
 # secrets.yaml
-wifi_ssid: "你的WiFi名称"
-wifi_password: "你的WiFi密码"
+wifi_ssid: "Your_WiFi_Name"
+wifi_password: "Your_WiFi_Password"
 ```
 
-#### 3️⃣ 编译并烧录
+#### 3️⃣ Compile and Flash
 
-使用 ESPHome 命令行工具：
+Using ESPHome command line tool:
 
 ```bash
-# 编译固件
+# Compile firmware
 esphome compile xiao-esp32-c3-led-strip.yaml
 
-# 烧录到设备（首次需要 USB 连接）
+# Flash to device (USB connection required for first time)
 esphome upload xiao-esp32-c3-led-strip.yaml
 
-# 或者一步到位：运行 = 编译 + 烧录 + 日志
+# Or all-in-one: run = compile + upload + logs
 esphome run xiao-esp32-c3-led-strip.yaml
 ```
 
-#### 4️⃣ 添加到 Home Assistant
+#### 4️⃣ Add to Home Assistant
 
-设备上线后，Home Assistant 会自动发现新设备。前往：
-> **设置** → **设备与服务** → **集成** → 点击 **配置** ESPHome 设备
-
----
-
-## 📱 设备详细说明
-
-### 📷 XIAO ESP32-S3 Sense 摄像头
-
-超紧凑的 WiFi 摄像头解决方案！
-
-```yaml
-# 主要特性
-- 支持 PSRAM（OCTAL 模式，80MHz）
-- 自动画面翻转
-- 实时视频流推送到 Home Assistant
-```
-
-**🔌 接线**：无需额外接线，使用板载 OV2640 摄像头
+After the device comes online, Home Assistant will automatically discover new devices. Navigate to:
+> **Settings** → **Devices & Services** → **Integrations** → Click **Configure** for ESPHome device
 
 ---
 
-### 🛏️ MR60BHA2 毫米波雷达
+## 📱 Detailed Device Descriptions
 
-60GHz 毫米波雷达，非接触式健康监测黑科技！
+### 📷 XIAO ESP32-S3 Sense Camera
+
+Ultra-compact WiFi camera solution!
 
 ```yaml
-# 检测能力
-- 👤 人体存在检测
-- 📏 目标距离测量
-- ❤️ 实时心率监测
-- 🌬️ 实时呼吸频率监测
-- 💡 环境光照度（BH1750）
-- 🌈 RGB 指示灯
+# Key Features
+- PSRAM support (OCTAL mode, 80MHz)
+- Automatic image flip
+- Real-time video streaming to Home Assistant
 ```
 
-**🔌 接线**：
+**🔌 Wiring**: No additional wiring needed, uses onboard OV2640 camera
+
+---
+
+### 🛏️ MR60BHA2 mmWave Radar
+
+60GHz mmWave radar, contactless health monitoring technology!
+
+```yaml
+# Detection Capabilities
+- 👤 Human presence detection
+- 📏 Target distance measurement
+- ❤️ Real-time heart rate monitoring
+- 🌬️ Real-time respiratory rate monitoring
+- 💡 Ambient illuminance (BH1750)
+- 🌈 RGB indicator light
+```
+
+**🔌 Wiring**:
 | MR60BHA2 | ESP32-C6 |
 |----------|----------|
 | RX | GPIO17 |
@@ -130,250 +130,260 @@ esphome run xiao-esp32-c3-led-strip.yaml
 
 ---
 
-### 🔘 Seeed IoT 按钮
+### 🔘 Seeed IoT Button
 
-一颗按钮，三种玩法！RGB 灯光反馈超酷炫！
+One button, three ways to play! Super cool RGB light feedback!
 
 ```yaml
-# 操作方式
-- 单击：触发开关1 + 闪烁效果
-- 双击：触发开关2 + 闪烁效果
-- 长按(1-2秒)：触发开关3 + 彩虹效果
+# Operation Methods
+- Single click: Trigger switch 1 + Blink effect
+- Double click: Trigger switch 2 + Flicker effect
+- Long press (1-2 sec): Trigger switch 3 + Rainbow effect
 ```
 
-**💡 RGB 灯效**：
-- Blink（闪烁）
-- Rainbow（彩虹）
-- Subtle Flicker（微光闪烁）
-- Random Color（随机颜色）
+**💡 RGB Light Effects**:
+- Blink
+- Rainbow
+- Subtle Flicker
+- Random Color
 
 ---
 
-### 💨 XIAO 气体传感器
+### 💨 XIAO Gas Sensor
 
-守护你的空气质量！支持多种气体检测。
+Guard your air quality! Supports multiple gas detection.
 
 ```yaml
-# 检测指标
-- 🧪 VOC（挥发性有机化合物）
-- 💀 CO（一氧化碳）
-- ⚠️ NO₂（二氧化氮）
-- 🍺 Ethanol（乙醇）
+# Detection Metrics
+- 🧪 VOC (Volatile Organic Compounds)
+- 💀 CO (Carbon Monoxide)
+- ⚠️ NO₂ (Nitrogen Dioxide)
+- 🍺 Ethanol
 ```
 
-**🔌 接线**：
-| Grove 气体传感器 | ESP32-C3 |
-|-----------------|----------|
+**🔌 Wiring**:
+| Grove Gas Sensor | ESP32-C3 |
+|------------------|----------|
 | SDA | GPIO6 |
 | SCL | GPIO7 |
 
 ---
 
-### 🌈 XIAO LED 灯带控制器
+### 🌈 XIAO LED Strip Controller
 
-48颗 WS2812 灯珠，打造梦幻氛围灯！
+48 WS2812 LEDs to create dreamy ambient lighting!
 
 ```yaml
-# 内置灯效（一键切换）
-🔴 Pulse（脉冲）
-🔵 Strobe（频闪）
-🟣 Strobe Red and Blue（红蓝警灯）
-🟢 Random（随机颜色）
-🟡 Slow Random Transition（慢速渐变）
-🟠 Flicker（烛火效果）
-🌈 Rainbow / Fast Rainbow（彩虹）
-🎨 Color Wipe（颜色擦除）
-✨ Twinkle / Random Twinkle（星光闪烁）
-🎆 Fireworks（烟花）
-🔄 Automation RGB Cycle（RGB 循环）
+# Built-in Light Effects (One-click Switch)
+🔴 Pulse
+🔵 Strobe
+🟣 Strobe Red and Blue (Police lights)
+🟢 Random
+🟡 Slow Random Transition
+🟠 Flicker (Candle effect)
+🌈 Rainbow / Fast Rainbow
+🎨 Color Wipe
+✨ Twinkle / Random Twinkle
+🎆 Fireworks
+🔄 Automation RGB Cycle
 ```
 
-**🔌 接线**：LED 数据线接 GPIO2
+**🔌 Wiring**: LED data line connects to GPIO2
 
 ---
 
-### 🎵 XIAO MP3 播放器
+### 🎵 XIAO MP3 Player
 
-基于 WT2605C 模块的智能音乐播放器！
+Smart music player based on WT2605C module!
 
 ```yaml
-# 功能特性
-▶️ 播放/暂停/停止
-⏮️⏭️ 上一曲/下一曲
-🔊 音量调节（0-31级）
-🔁 播放模式：顺序/单曲循环/文件夹循环/随机/单次
+# Features
+▶️ Play/Pause/Stop
+⏮️⏭️ Previous/Next track
+🔊 Volume control (0-31 levels)
+🔁 Play modes: Sequential/Single loop/Folder loop/Random/Single shot
 
-# Home Assistant 服务
-- play_track：播放指定曲目
-- play_file：播放指定文件名
-- set_volume：设置音量
-- send_command：发送自定义 AT 命令
+# Home Assistant Services
+- play_track: Play specific track
+- play_file: Play by filename
+- set_volume: Set volume
+- send_command: Send custom AT command
 ```
 
-**🔌 接线**：
+**🔌 Wiring**:
 | WT2605C | ESP32-C3 |
 |---------|----------|
 | RX | GPIO21 |
 | TX | GPIO20 |
 
-**📁 SD 卡格式**：歌曲命名为 `0001.mp3`, `0002.mp3`...
+**📁 SD Card Format**: Name songs as `0001.mp3`, `0002.mp3`...
 
 ---
 
-### 🌀 XIAO 智能风扇
+### 🌀 XIAO Smart Fan
 
-PWM 调速电机控制，正反转自如！
+PWM speed-controlled motor, forward and reverse rotation with ease!
 
 ```yaml
-# 控制功能
-🔄 正转（开启）
-🔃 反转（关闭）
-⏹️ 停止
-📊 速度滑块调节（0-100%）
+# Control Functions
+🔄 Forward (Open)
+🔃 Reverse (Close)
+⏹️ Stop
+📊 Speed slider control (0-100%)
 ```
 
-**🔌 接线**：
-| 电机驱动 | ESP32-C6 |
-|---------|----------|
-| IA（正转）| GPIO1 |
-| IB（反转）| GPIO0 |
+**🔌 Wiring**:
+| Motor Driver | ESP32-C6 |
+|--------------|----------|
+| IA (Forward) | GPIO1 |
+| IB (Reverse) | GPIO0 |
 
 ---
 
-### 💡 XIAO LED 发光按钮
+### 💡 XIAO LED Lighted Button
 
-3路带灯按钮，按下即亮，反馈清晰！
+3-channel illuminated buttons, press to light up with clear feedback!
 
 ```yaml
-# 特性
-- 开机自动亮灯
-- 按下时闪烁2次反馈
-- 每个按钮独立控制
-- 可绑定 Home Assistant 自动化
+# Features
+- Auto-on LEDs at boot
+- 2x blink feedback when pressed
+- Independent control for each button
+- Bindable to Home Assistant automations
 ```
 
-**🔌 接线**：
-| 按钮 | LED(SIG1) | BTN(SIG2) |
-|------|-----------|-----------|
-| 按钮1 | GPIO0 | GPIO1 |
-| 按钮2 | GPIO19 | GPIO20 |
-| 按钮3 | GPIO2 | GPIO21 |
+**🔌 Wiring**:
+| Button | LED(SIG1) | BTN(SIG2) |
+|--------|-----------|-----------|
+| Button 1 | GPIO0 | GPIO1 |
+| Button 2 | GPIO19 | GPIO20 |
+| Button 3 | GPIO2 | GPIO21 |
 
 ---
 
-### 🌱 XIAO 土壤湿度传感器
+### 🌱 XIAO Soil Moisture Sensor
 
-智能植物保姆，再也不怕忘记浇水！
+Smart plant nanny, never forget to water again!
 
 ```yaml
-# 特性
-- 🔴 红灯：土壤干燥，需要浇水
-- 🟡 黄灯：土壤偏干，可以浇水
-- 🟢 绿灯：湿度正常
+# Features
+- 🔴 Red light: Soil dry, needs watering
+- 🟡 Yellow light: Soil slightly dry, can water
+- 🟢 Green light: Moisture normal
 
-# 操作
-- 单击按钮：检测一次并闪灯提示
-- 连续3次按钮：进入校准模式
+# Operation
+- Single button press: Check once and flash LED indicator
+- 3 consecutive button presses: Enter calibration mode
 ```
 
-**📊 校准流程**：
-1. 红灯闪烁 10 秒 → 将传感器放入干燥土壤
-2. 绿灯闪烁 10 秒 → 将传感器放入湿润土壤
-3. 绿灯快闪 = 校准成功 ✅ / 红灯快闪 = 校准失败 ❌
+**📊 Calibration Process**:
+1. Red LED flashes for 10 sec → Place sensor in dry soil
+2. Green LED flashes for 10 sec → Place sensor in moist soil
+3. Fast green flash = Calibration success ✅ / Fast red flash = Calibration failed ❌
 
 ---
 
-### 📺 reTerminal E1002 电子墨水屏
+### 📺 reTerminal E1002 E-Paper Display
 
-7.3 寸彩色电子墨水屏，打造智能家居数据中心！
+7.3-inch color e-paper display, create your smart home data center!
 
 ```yaml
-# 显示页面
-📄 Page 1：传感器数据概览
-  - 卧室状态（光照、距离、心率、呼吸）
-  - 阳台植物（土壤湿度、电池电量）
-  - 全屋用电（电压、功率、电流、总能耗）
+# Display Pages
+📄 Page 1: Sensor Data Overview
+  - Bedroom status (illuminance, distance, heart rate, respiratory)
+  - Balcony plants (soil moisture, battery level)
+  - Whole house power (voltage, power, current, total energy)
 
-📄 Page 2：开关控制
-  - MP3 播放控制（播放/暂停、上一曲、下一曲）
-  - LED 灯带控制
-  - 风扇控制
-  - 客厅空气质量（CO、NO₂、乙醇、VOC）
+📄 Page 2: Switch Control
+  - MP3 playback control (play/pause, previous, next)
+  - LED strip control
+  - Fan control
+  - Living room air quality (CO, NO₂, Ethanol, VOC)
 
-📄 Page 3：传感器数据（黄色主题）
-  - 卧室状态卡片
-  - 阳台植物卡片
-  - 全屋用电大卡片
-  - 设备功耗卡片
+📄 Page 3: Sensor Data (Yellow Theme)
+  - Bedroom status card
+  - Balcony plants card
+  - Whole house power large card
+  - Device power consumption card
 ```
 
-**🎛️ 按钮操作**：
-| 按钮 | 功能 |
-|------|------|
-| 绿色键 | 刷新屏幕（双声蜂鸣反馈）|
-| 右侧白键 | 下一页 |
-| 左侧白键 | 上一页 |
+**🎛️ Button Operations**:
+| Button | Function |
+|--------|----------|
+| Green key | Refresh screen (double beep feedback) |
+| Right white key | Next page |
+| Left white key | Previous page |
 
 ---
 
-## 🎨 Home Assistant 仪表盘
+## 🎨 Home Assistant Dashboard
 
-项目包含两个精心设计的 Dashboard 配置：
+The project includes two carefully designed Dashboard configurations:
 
-| 文件 | 语言 | 说明 |
-|------|------|------|
-| `chinese-dashboard.yaml` | 🇨🇳 中文 | 完整中文界面 |
-| `english-dashboard.yaml` | 🇺🇸 英文 | 完整英文界面 |
+| File | Language | Description |
+|------|----------|-------------|
+| `chinese-dashboard.yaml` | 🇨🇳 Chinese | Complete Chinese interface |
+| `english-dashboard.yaml` | 🇺🇸 English | Complete English interface |
 
-### 📥 导入方法
+### 📥 Import Method
 
-1. 打开 Home Assistant
-2. 进入 **设置** → **仪表盘**
-3. 点击 **添加仪表盘**
-4. 选择 **从 YAML 创建**
-5. 复制粘贴对应文件内容
+1. Open Home Assistant
+2. Go to **Settings** → **Dashboards**
+3. Click **Add Dashboard**
+4. Select **Create from YAML**
+5. Copy and paste the corresponding file content
 
 ---
 
-## 🔗 购买链接
+## 🔗 Purchase Links
 
-| 产品 | 链接 |
-|------|------|
+| Product | Link |
+|---------|------|
 | XIAO ESP32-C3 | [Seeed Studio](https://www.seeedstudio.com/Seeed-XIAO-ESP32C3-p-5431.html) |
 | XIAO ESP32-C6 | [Seeed Studio](https://www.seeedstudio.com/Seeed-Studio-XIAO-ESP32C6-p-5884.html) |
 | XIAO ESP32-S3 Sense | [Seeed Studio](https://www.seeedstudio.com/XIAO-ESP32S3-Sense-p-5639.html) |
-| MR60BHA2 Kit | [Seeed Studio](https://www.seeedstudio.com/60GHz-mmWave-Radar-Sensor-Breathing-and-Heartbeat-Module-Lite-p-5860.html) |
-| reTerminal E1002 | [Seeed Studio](https://www.seeedstudio.com/) |
-| Grove 气体传感器 V2 | [Seeed Studio](https://www.seeedstudio.com/Grove-Multichannel-Gas-Sensor-v2-p-4569.html) |
+| MR60BHA2 Kit | [Seeed Studio](https://www.seeedstudio.com/MR60BHA2-60GHz-mmWave-Sensor-Breathing-and-Heartbeat-Module-p-5945.html) |
+| reTerminal E1002 | [Seeed Studio](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html) |
+| Grove Gas Sensor V2 | [Seeed Studio](https://www.seeedstudio.com/Grove-Multichannel-Gas-Sensor-v2-p-4569.html) |
+| Home Assistant Green | [Seeed Studio](https://www.seeedstudio.com/Home-Assistant-Green-p-5792.html) |
+| 2-Channel Wi-Fi AC Energy Meter | [Seeed Studio](https://www.seeedstudio.com/XIAO-2-Channel-Wi-Fi-AC-Energy-Meter-Bundle-Kit.html) |
+| IoT Button | *Coming Soon* |
+| XIAO Soil Moisture Sensor | [Seeed Studio](https://www.seeedstudio.com/XIAO-Soil-Sensor-p-6452.html) |
+| XIAO 2-Channel WiFi AC Relay | [Seeed Studio](https://www.seeedstudio.com/Dual-Smart-Relay-Module-for-XIAO-p-6309.html) |
+| Grove RED LED Button | [Seeed Studio](https://www.seeedstudio.com/Grove-Red-LED-Button.html) |
+| Grove Yellow LED Button | [Seeed Studio](https://www.seeedstudio.com/Grove-Yellow-LED-Button.html) |
+| LED Driver Board | [Seeed Studio](https://www.seeedstudio.com/LED-Driver-Board-for-Seeed-Studio-XIAO-p-6451.html) |
+| Grove - MP3 Module V4.0 | [Seeed Studio](https://www.seeedstudio.com/Grove-MP3-V4-p-5862.html) |
+| Grove Base for XIAO | [Seeed Studio](https://www.seeedstudio.com/Grove-Shield-for-Seeeduino-XIAO-p-4621.html) |
 
 ---
 
-## 📚 参考资源
+## 📚 Reference Resources
 
-- 📖 [ESPHome 官方文档](https://esphome.io/)
-- 🏠 [Home Assistant 官方文档](https://www.home-assistant.io/docs/)
+- 📖 [ESPHome Official Documentation](https://esphome.io/)
+- 🏠 [Home Assistant Official Documentation](https://www.home-assistant.io/docs/)
 - 🌱 [Seeed Studio Wiki](https://wiki.seeedstudio.com/)
-- 🎯 [MR60BHA2 ESPHome 组件](https://github.com/limengdu/MR60BHA2_ESPHome_external_components)
+- 🎯 [MR60BHA2 ESPHome Component](https://github.com/limengdu/MR60BHA2_ESPHome_external_components)
 
 ---
 
-## 🤝 贡献
+## 🤝 Contributing
 
-欢迎提交 Issue 和 Pull Request！
+Issues and Pull Requests are welcome!
 
-如果这个项目对你有帮助，请给个 ⭐ Star 支持一下！
+If this project helps you, please give it a ⭐ Star!
 
 ---
 
-## 📄 许可证
+## 📄 License
 
-MIT License - 随心使用，注明出处即可 😊
+MIT License - Use freely, just give credit 😊
 
 ---
 
 <p align="center">
   <b>🎪 Made with ❤️ for Maker Faire</b>
   <br>
-  <i>让智能家居触手可及！</i>
+  <i>Making smart home accessible to everyone!</i>
 </p>
 
