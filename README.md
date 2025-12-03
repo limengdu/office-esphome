@@ -26,16 +26,16 @@
 
 | Device | Chip | Function | File |
 |--------|------|----------|------|
-| 📷 **XIAO ESP32-S3 Sense Camera** | ESP32-S3 | Bedroom real-time monitoring | `xiao-esp32s3-camera.yaml` |
-| 🛏️ **MR60BHA2 mmWave Radar Kit** | ESP32-C6 | Human presence detection, heart rate & breathing monitoring | `mr60bha2.yaml` |
-| 🔘 **Seeed IoT Button** | ESP32-C6 | Three-function wireless button (single/double/long press) | `seeed-iot-button.yaml` |
-| 💨 **XIAO Gas Sensor** | ESP32-C3 | VOC, CO, NO₂, Ethanol detection | `xiao-esp32-c3-gas-sensor.yaml` |
-| 🌈 **XIAO LED Strip Controller** | ESP32-C3 | WS2812 addressable LED strip (48 LEDs) | `xiao-esp32-c3-led-strip.yaml` |
-| 🎵 **XIAO MP3 Player** | ESP32-C3 | WT2605C module, supports SD card playback | `xiao-esp32-c3-mp3.yaml` |
-| 🌀 **XIAO Smart Fan** | ESP32-C6 | PWM speed-controlled motor | `xiao-esp32-c6-fan.yaml` |
-| 💡 **XIAO LED Lighted Button** | ESP32-C6 | 3-channel illuminated button control | `xiao-esp32-c6-led-button.yaml` |
-| 🌱 **XIAO Soil Moisture Sensor** | ESP32-C6 | Plant watering reminder with calibration | `xiao-soil-moisture.yaml` |
-| 📺 **reTerminal E1002** | ESP32-S3 | 7.3-inch color e-paper dashboard | `reterminal-e1002.yaml` |
+| 📷 **[XIAO ESP32-S3 Sense Camera](https://www.seeedstudio.com/XIAO-ESP32S3-Sense-p-5639.html)** | ESP32-S3 | Bedroom real-time monitoring | `xiao-esp32s3-camera.yaml` |
+| 🛏️ **[XIAO MR60BHA2 mmWave Radar Kit](https://www.seeedstudio.com/MR60BHA2-60GHz-mmWave-Sensor-Breathing-and-Heartbeat-Module-p-5945.html)** | ESP32-C6 | Human presence detection, heart rate & breathing monitoring | `mr60bha2.yaml` |
+| 🔘 **[Seeed IoT Button](https://www.seeedstudio.com/Seeed-IoT-Button-p-6419.html)** | ESP32-C6 | Three-function wireless button (single/double/long press) | `seeed-iot-button.yaml` |
+| 💨 **XIAO Gas Sensor** | [XIAO ESP32-C3](https://www.seeedstudio.com/Seeed-XIAO-ESP32C3-p-5431.html) | VOC, CO, NO₂, Ethanol detection | `xiao-esp32-c3-gas-sensor.yaml` |
+| 🌈 **XIAO LED Strip Controller** | XIAO ESP32-C3 + [LED Driver Board](https://www.seeedstudio.com/LED-Driver-Board-for-Seeed-Studio-XIAO-p-6451.html) | WS2812 addressable LED strip (48 LEDs) | `xiao-esp32-c3-led-strip.yaml` |
+| 🎵 **XIAO MP3 Player** | XIAO ESP32-C3 | WT2605C module, supports SD card playback | `xiao-esp32-c3-mp3.yaml` |
+| 🌀 **XIAO Smart Fan** | [XIAO ESP32-C6](https://www.seeedstudio.com/Seeed-Studio-XIAO-ESP32C6-p-5884.html) | PWM speed-controlled motor | `xiao-esp32-c6-fan.yaml` |
+| 💡 **XIAO LED Lighted Button** | XIAO ESP32-C6 | 3-channel illuminated button control | `xiao-esp32-c6-led-button.yaml` |
+| 🌱 **[XIAO Soil Moisture Sensor](https://www.seeedstudio.com/XIAO-Soil-Sensor-p-6452.html)** | XIAO ESP32-C6 | Plant watering reminder with calibration | `xiao-soil-moisture.yaml` |
+| 📺 **[reTerminal E1002](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html)** | ESP32-S3 | 7.3-inch color e-paper dashboard | `reterminal-e1002.yaml` |
 
 ---
 
